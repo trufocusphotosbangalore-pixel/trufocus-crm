@@ -1,0 +1,52 @@
+[
+  {
+    "table": "business_profile",
+    "ok": true,
+    "count": 1
+  },
+  {
+    "table": "client_requests",
+    "ok": true,
+    "count": 0
+  },
+  {
+    "table": "customer_portals",
+    "ok": true,
+    "count": 1
+  },
+  {
+    "table": "data_storage",
+    "ok": true,
+    "count": 0
+  },
+  {
+    "table": "enquiries",
+    "ok": true,
+    "count": 0
+  },
+  {
+    "table": "finance_payments",
+    "ok": true,
+    "count": 1
+  },
+  {
+    "table": "post_production",
+    "ok": true,
+    "count": 0
+  },
+  {
+    "table": "settings",
+    "ok": true,
+    "count": 0
+  },
+  {
+    "table": "team_members",
+    "ok": true,
+    "count": 4
+  },
+  {
+    "table": "work_orders",
+    "ok": true,
+    "count": 1
+  }
+]

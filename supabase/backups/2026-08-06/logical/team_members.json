@@ -1,0 +1,247 @@
+[
+  {
+    "id": "acc_admin_owner",
+    "data": {
+      "id": "acc_admin_owner",
+      "email": "owner@trufocusphotos.com",
+      "mobile": "+91 90711 14965",
+      "role_id": "owner",
+      "username": "trufocus.admin",
+      "job_roles": [
+        "Studio Owner",
+        "Executive Director"
+      ],
+      "role_name": "Owner",
+      "team_type": "in_house",
+      "tenant_id": "studio_main",
+      "created_at": "2026-08-05T15:51:35.406Z",
+      "department": "Executive",
+      "updated_at": "2026-08-05T15:51:35.406Z",
+      "employee_id": "OWNER-001",
+      "system_role": "admin",
+      "locked_until": null,
+      "employee_name": "Trufocus Studio Owner",
+      "last_login_at": "2026-08-05T15:51:35.406Z",
+      "login_enabled": true,
+      "module_access": {
+        "data": true,
+        "team": true,
+        "reports": true,
+        "finances": true,
+        "projects": true,
+        "settings": true,
+        "dashboard": true,
+        "enquiries": true,
+        "trufocus_ai": true,
+        "client_requests": true,
+        "post_production": true
+      },
+      "password_hash": "Password@123",
+      "account_status": "active",
+      "workspace_role": "owner",
+      "employment_type": "in_house",
+      "failed_attempts": 0,
+      "specializations": [
+        "Lead Photographer",
+        "Executive Director"
+      ]
+    },
+    "created_at": "2026-08-05T13:16:22.700382+00:00",
+    "updated_at": "2026-08-05T15:52:13.749+00:00"
+  },
+  {
+    "id": "acc_1785937951140",
+    "data": {
+      "id": "acc_1785937951140",
+      "email": "suresh@gmail.com",
+      "mobile": "9845513370",
+      "role_id": "videographer",
+      "username": "suresh",
+      "job_roles": [
+        "Video Editor"
+      ],
+      "role_name": "VIDEOGRAPHER",
+      "team_type": "in_house",
+      "tenant_id": "studio_main",
+      "created_at": "2026-08-05T13:52:31.140Z",
+      "department": "Videography",
+      "updated_at": "2026-08-05T13:52:31.140Z",
+      "employee_id": "EMP-1001",
+      "system_role": "staff",
+      "locked_until": null,
+      "employee_name": "suresh",
+      "last_login_at": null,
+      "login_enabled": true,
+      "module_access": {
+        "data": true,
+        "team": false,
+        "reports": false,
+        "finances": false,
+        "projects": false,
+        "settings": false,
+        "dashboard": true,
+        "enquiries": false,
+        "trufocus_ai": false,
+        "client_requests": true,
+        "post_production": true
+      },
+      "password_hash": "Password@123",
+      "account_status": "active",
+      "workspace_role": "videographer",
+      "employment_type": "in_house",
+      "failed_attempts": 0,
+      "specializations": [
+        "Video Editor"
+      ],
+      "plain_temp_password": "Password@123"
+    },
+    "created_at": "2026-08-05T13:52:32.639188+00:00",
+    "updated_at": "2026-08-05T13:52:31.195+00:00"
+  },
+  {
+    "id": "main",
+    "data": [
+      {
+        "id": "acc_1785937951140",
+        "email": "suresh@gmail.com",
+        "mobile": "9845513370",
+        "role_id": "videographer",
+        "username": "suresh",
+        "job_roles": [
+          "Video Editor"
+        ],
+        "role_name": "VIDEOGRAPHER",
+        "team_type": "in_house",
+        "tenant_id": "studio_main",
+        "created_at": "2026-08-05T13:52:31.140Z",
+        "department": "Videography",
+        "updated_at": "2026-08-05T13:52:31.140Z",
+        "employee_id": "EMP-1001",
+        "system_role": "staff",
+        "locked_until": null,
+        "employee_name": "suresh",
+        "last_login_at": null,
+        "login_enabled": true,
+        "module_access": {
+          "data": true,
+          "team": false,
+          "reports": false,
+          "finances": false,
+          "projects": false,
+          "settings": false,
+          "dashboard": true,
+          "enquiries": false,
+          "trufocus_ai": false,
+          "client_requests": true,
+          "post_production": true
+        },
+        "password_hash": "Password@123",
+        "account_status": "active",
+        "workspace_role": "videographer",
+        "employment_type": "in_house",
+        "failed_attempts": 0,
+        "specializations": [
+          "Video Editor"
+        ],
+        "plain_temp_password": "Password@123"
+      },
+      {
+        "id": "acc_admin_owner",
+        "email": "owner@trufocusphotos.com",
+        "mobile": "+91 90711 14965",
+        "role_id": "owner",
+        "username": "trufocus.admin",
+        "job_roles": [
+          "Studio Owner",
+          "Executive Director"
+        ],
+        "role_name": "Owner",
+        "team_type": "in_house",
+        "tenant_id": "studio_main",
+        "created_at": "2026-08-05T13:37:00.436Z",
+        "department": "Executive",
+        "updated_at": "2026-08-05T13:37:00.436Z",
+        "employee_id": "OWNER-001",
+        "system_role": "admin",
+        "locked_until": null,
+        "employee_name": "Trufocus Studio Owner",
+        "last_login_at": "2026-08-05T13:37:00.436Z",
+        "login_enabled": true,
+        "module_access": {
+          "data": true,
+          "team": true,
+          "reports": true,
+          "finances": true,
+          "projects": true,
+          "settings": true,
+          "dashboard": true,
+          "enquiries": true,
+          "trufocus_ai": true,
+          "client_requests": true,
+          "post_production": true
+        },
+        "password_hash": "Password@123",
+        "account_status": "active",
+        "workspace_role": "owner",
+        "employment_type": "in_house",
+        "failed_attempts": 0,
+        "specializations": [
+          "Lead Photographer",
+          "Executive Director"
+        ]
+      }
+    ],
+    "created_at": "2026-08-05T13:37:22.885382+00:00",
+    "updated_at": "2026-08-05T13:52:31.469+00:00"
+  },
+  {
+    "id": "fa70f4a8-f396-44a8-9613-315fd2f78a29",
+    "data": {
+      "id": "acc_1785937951140",
+      "email": "suresh@gmail.com",
+      "mobile": "9845513370",
+      "role_id": "videographer",
+      "username": "suresh",
+      "job_roles": [
+        "Video Editor"
+      ],
+      "role_name": "VIDEOGRAPHER",
+      "team_type": "in_house",
+      "tenant_id": "studio_main",
+      "created_at": "2026-08-05T13:52:31.140Z",
+      "department": "Videography",
+      "updated_at": "2026-08-05T13:52:31.140Z",
+      "employee_id": "EMP-1001",
+      "system_role": "staff",
+      "auth_user_id": "fa70f4a8-f396-44a8-9613-315fd2f78a29",
+      "locked_until": null,
+      "employee_name": "suresh",
+      "last_login_at": null,
+      "login_enabled": true,
+      "module_access": {
+        "data": true,
+        "team": false,
+        "reports": false,
+        "finances": false,
+        "projects": false,
+        "settings": false,
+        "dashboard": true,
+        "enquiries": false,
+        "trufocus_ai": false,
+        "client_requests": true,
+        "post_production": true
+      },
+      "password_hash": "Password@123",
+      "account_status": "active",
+      "workspace_role": "videographer",
+      "employment_type": "in_house",
+      "failed_attempts": 0,
+      "specializations": [
+        "Video Editor"
+      ],
+      "plain_temp_password": "Password@123"
+    },
+    "created_at": "2026-08-05T13:52:36.463564+00:00",
+    "updated_at": "2026-08-05T13:52:35.169+00:00"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "main",
+    "data": [
+      {
+        "id": "pay-1785922118700",
+        "amount": 10000,
+        "status": "completed",
+        "remarks": "",
+        "created_at": "2026-08-05T09:28:38.700Z",
+        "received_by": "Studio Admin",
+        "payment_date": "2026-08-05",
+        "payment_mode": "upi",
+        "customer_name": "Prem Actor",
+        "work_order_id": "wo-1785920742092",
+        "receipt_number": "RCT-2026-0001",
+        "transaction_ref": "7062",
+        "work_order_number": "WO-2025-915"
+      }
+    ],
+    "created_at": "2026-08-05T09:28:38.996042+00:00",
+    "updated_at": "2026-08-05T09:28:38.7+00:00"
+  }
+]

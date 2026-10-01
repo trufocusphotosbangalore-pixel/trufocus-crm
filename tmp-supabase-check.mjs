@@ -1,0 +1,21 @@
+import fs from 'fs'
+import path from 'path'
+import { createClient } from '@supabase/supabase-js'
+const envPath = path.join(process.cwd(), '.env.local')
+const env = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : ''
+const vars = {}
+env.split(/\r?\n/).forEach(line => {
+  const m = line.match(/^([^=]+)=(.*)$/)
+  if (m) vars[m[1]] = m[2]
+})
+if (!vars.VITE_SUPABASE_URL || !vars.VITE_SUPABASE_ANON_KEY) {
+  console.error('No supabase env found.')
+  process.exit(1)
+}
+const supabase = createClient(vars.VITE_SUPABASE_URL, vars.VITE_SUPABASE_ANON_KEY)
+const table = 'user_accounts'
+const query = 'id,employee_id,employee_name,email,username,auth_user_id,account_status,role_id,role_name'
+const { data, error } = await supabase.from(table).select(query).limit(20)
+console.log('supabase url:', vars.VITE_SUPABASE_URL)
+console.log('error:', error)
+console.log('data:', JSON.stringify(data, null, 2))

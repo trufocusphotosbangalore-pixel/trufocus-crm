@@ -1,0 +1,2746 @@
+[
+  {
+    "id": "main",
+    "data": [
+      {
+        "id": "wo-1785920742092",
+        "city": "Bengaluru",
+        "email": null,
+        "notes": null,
+        "venue": "Prems house",
+        "events": [
+          {
+            "id": "ev-1785920506510",
+            "notes": "",
+            "venue": "prems house",
+            "services": [
+              {
+                "id": "srv-1785920556012-wbc6",
+                "remarks": "",
+                "end_time": "21:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "17:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785920621639-lktk",
+                "remarks": "",
+                "end_time": "21:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "17:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-08-01",
+            "event_time": "17:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9972501008",
+        "source": "referral",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785922118704-bjg3",
+              "notes": "",
+              "amount": 10000,
+              "created_at": "2026-08-05T09:28:38.704Z",
+              "received_by": "Studio Admin",
+              "payment_date": "2026-08-05",
+              "payment_mode": "upi",
+              "work_order_id": "wo-1785920742092",
+              "transaction_ref": "7062"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 10000,
+          "gst_percent": 0,
+          "balance_amount": 0,
+          "package_amount": 10000,
+          "payment_status": "fully_paid",
+          "amount_received": 10000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-742092",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T09:05:42.092Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T09:28:38.704Z",
+        "booking_date": "2026-08-31",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Prems wedding aniversay",
+        "customer_name": "Prem Actor",
+        "payment_status": "fully_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": "9113582807",
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-915",
+        "album_delivery_date": null,
+        "final_delivery_date": "2026-08-08",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785913573322",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": "Uttara Kannada Hall Nandini Layout",
+        "events": [
+          {
+            "id": "ev-1785913493112",
+            "notes": "",
+            "venue": "Uttara Kannada Hall Nandini Layout",
+            "services": [
+              {
+                "id": "srv-1785913510622-8kt6",
+                "remarks": "",
+                "end_time": "18:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "09:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785913516483-osfv",
+                "remarks": "",
+                "end_time": "18:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "09:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-09-06",
+            "event_time": "12:35",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "8971190638",
+        "source": "facebook",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785913547499-p74e",
+              "notes": "",
+              "amount": 3000,
+              "created_at": "2026-08-05T07:05:47.499Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-08-05",
+              "payment_mode": "Cash",
+              "transaction_ref": ""
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 8000,
+          "gst_percent": 0,
+          "balance_amount": 5000,
+          "package_amount": 8000,
+          "payment_status": "partially_paid",
+          "amount_received": 3000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-09-30",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-573322",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T07:06:13.322Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T07:06:13.322Z",
+        "booking_date": "2026-07-14",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Maternity Shoot",
+        "customer_name": "Yogesh",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-245",
+        "album_delivery_date": "2026-09-30",
+        "final_delivery_date": "2026-09-30",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785913403094",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": "Gowdra Hatti kengri",
+        "events": [
+          {
+            "id": "ev-1785913279416",
+            "notes": "",
+            "venue": "Gowdra Hatti kengri",
+            "services": [
+              {
+                "id": "srv-1785913298850-vxzx",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "09:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785913328994-ywng",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "09:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-06-19",
+            "event_time": "09:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9916662380",
+        "source": "whatsapp",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785913385613-vdkt",
+              "notes": "",
+              "amount": 2000,
+              "created_at": "2026-08-05T07:03:05.613Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-06-18",
+              "payment_mode": "UPI",
+              "transaction_ref": "2323"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 22000,
+          "gst_percent": 0,
+          "balance_amount": 20000,
+          "package_amount": 22000,
+          "payment_status": "partially_paid",
+          "amount_received": 2000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-01",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-403094",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T07:03:23.094Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T07:03:23.094Z",
+        "booking_date": "2026-06-11",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Naming Ceremony of Hanvay",
+        "customer_name": "Varun kumar",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-783",
+        "album_delivery_date": "2026-08-01",
+        "final_delivery_date": "2026-08-01",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785913150507",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785913046944",
+            "notes": "",
+            "venue": "SDP PALACE KATAMNALLIUR K R URAM",
+            "services": [
+              {
+                "id": "srv-1785913075442-ozmc",
+                "remarks": "",
+                "end_time": "18:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "06:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-10-19",
+            "event_time": "06:00",
+            "event_type_id": "et-1",
+            "event_type_name": "Wedding",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9740335589",
+        "source": "instagram",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785913122137-2g9p",
+              "notes": "",
+              "amount": 10000,
+              "created_at": "2026-08-05T06:58:42.137Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-06-15",
+              "payment_mode": "UPI",
+              "transaction_ref": "21323"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 110000,
+          "gst_percent": 0,
+          "balance_amount": 100000,
+          "package_amount": 110000,
+          "payment_status": "partially_paid",
+          "amount_received": 10000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Standard Wedding Photography & Videography Agreement",
+          "status": "pending",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Booking & Retainer</h2>\n<p>A non-refundable retainer fee of <strong>25%</strong> is required upon signing this contract to secure the shoot date(s). The balance amount shall be paid as per the agreed payment schedule.</p>\n\n<h2>2. Coverage & Services</h2>\n<p>Trufocus Photography agrees to provide the photographic and videographic coverage detailed in the Work Order. Any extra hours or additional services requested on-site will be billed separately.</p>\n\n<h2>3. Deliverables & Timeline</h2>\n<ul>\n  <li><strong>Edited High-Resolution Photos:</strong> Delivered within 21 to 30 working days after selection.</li>\n  <li><strong>Cinematic Teaser & Highlight Video:</strong> Delivered within 45 working days post-event.</li>\n  <li><strong>Photobooks & Printed Media:</strong> Delivered within 30 days after client album proof approval.</li>\n</ul>\n\n<h2>4. Copyright & Usage Rights</h2>\n<p>Trufocus Photography retains copyright for all images and video footage. The client is granted a non-exclusive license for personal usage, printing, and social media sharing.</p>\n\n<h2>5. Cancellation & Rescheduling</h2>\n<p>In the event of cancellation by the client, retainer payments remain non-refundable. Rescheduling is subject to studio calendar availability.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-150507",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:59:10.507Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Wedding",
+        "updated_at": "2026-08-05T06:59:10.507Z",
+        "booking_date": "2026-07-14",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Sahana's Wedding",
+        "customer_name": "Chandre Gowd",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-187",
+        "album_delivery_date": "2026-10-31",
+        "final_delivery_date": "2026-10-31",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785912924529",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": "Hilton Hotel",
+        "events": [
+          {
+            "id": "ev-1785912820351",
+            "notes": "",
+            "venue": "Hilton Hotel",
+            "services": [
+              {
+                "id": "srv-1785912859277-3c49",
+                "remarks": "",
+                "end_time": "22:00",
+                "quantity": 1,
+                "service_id": "srv-2",
+                "start_time": "19:00",
+                "service_name": "Candid Photography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-07-11",
+            "event_time": "19:00",
+            "event_type_id": "et-8",
+            "event_type_name": "Corporate Event",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "7353759095",
+        "source": "referral",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785912906414-ap1w",
+              "notes": "",
+              "amount": 5000,
+              "created_at": "2026-08-05T06:55:06.414Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-07-11",
+              "payment_mode": "Cash",
+              "transaction_ref": ""
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 5000,
+          "gst_percent": 0,
+          "balance_amount": 0,
+          "package_amount": 5000,
+          "payment_status": "fully_paid",
+          "amount_received": 5000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-01",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-924529",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:55:24.529Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Corporate Event",
+        "updated_at": "2026-08-05T06:55:24.529Z",
+        "booking_date": "2026-07-10",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Cocktail Party",
+        "customer_name": "Nikita Hilton Hotel",
+        "payment_status": "fully_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-168",
+        "album_delivery_date": "2026-08-01",
+        "final_delivery_date": "2026-08-01",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785912719974",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": "White Petals, Vijayangar",
+        "events": [
+          {
+            "id": "ev-1785912581393",
+            "notes": "",
+            "venue": "White Petals, Vijayanagar",
+            "services": [
+              {
+                "id": "srv-1785912624832-etsb",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "10:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Candid Photographer",
+                    "employee_id": "fl-1785768027743",
+                    "employee_name": "Chidananda"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785912645258-i5p4",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-2",
+                "start_time": "10:00",
+                "service_name": "Candid Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Candid Videographer",
+                    "employee_id": "fl-1785767958032",
+                    "employee_name": "Murali"
+                  }
+                ]
+              }
+            ],
+            "event_date": "2026-07-26",
+            "event_time": "09:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9844507550",
+        "source": "referral",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [],
+          "gst_amount": 0,
+          "net_amount": 25000,
+          "gst_percent": 0,
+          "balance_amount": 25000,
+          "package_amount": 25000,
+          "payment_status": "pending",
+          "amount_received": 0,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-719974",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:51:59.974Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T06:51:59.974Z",
+        "booking_date": "2026-07-11",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Mivanshi's Magical First Birthday",
+        "customer_name": " Mr & Mrs Nagaraj",
+        "payment_status": "pending",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-444",
+        "album_delivery_date": "2026-08-31",
+        "final_delivery_date": "2026-08-31",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785912419464",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785912255295",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785912297442-v5tk",
+                "remarks": "",
+                "end_time": "21:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "18:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785912305065-g2wm",
+                "remarks": "",
+                "end_time": "21:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "18:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-05-30",
+            "event_time": "18:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9535408514",
+        "source": "whatsapp",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785912377374-uq4a",
+              "notes": "",
+              "amount": 10000,
+              "created_at": "2026-08-05T06:46:17.374Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-05-29",
+              "payment_mode": "UPI",
+              "transaction_ref": "2323"
+            },
+            {
+              "id": "pay-1785912398243-6x0z",
+              "notes": "",
+              "amount": 4000,
+              "created_at": "2026-08-05T06:46:38.243Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-06-18",
+              "payment_mode": "UPI",
+              "transaction_ref": "2323"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 18000,
+          "gst_percent": 0,
+          "balance_amount": 4000,
+          "package_amount": 18000,
+          "payment_status": "partially_paid",
+          "amount_received": 14000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-419464",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:46:59.464Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T06:46:59.464Z",
+        "booking_date": "2026-05-29",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": " Happy Birthday Zainab",
+        "customer_name": "Maseeha",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-988",
+        "album_delivery_date": "2026-08-15",
+        "final_delivery_date": "2026-08-15",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785912163251",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785912031496",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785912065668-ezs0",
+                "remarks": "",
+                "end_time": "15:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "08:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785912074008-32el",
+                "remarks": "",
+                "end_time": "15:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "08:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-08-23",
+            "event_time": "08:00",
+            "event_type_id": "et-1",
+            "event_type_name": "Wedding",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9739395810",
+        "source": "whatsapp",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785912139924-n42q",
+              "notes": "",
+              "amount": 5000,
+              "created_at": "2026-08-05T06:42:19.924Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-07-11",
+              "payment_mode": "UPI",
+              "transaction_ref": "2222"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 25000,
+          "gst_percent": 0,
+          "balance_amount": 20000,
+          "package_amount": 25000,
+          "payment_status": "partially_paid",
+          "amount_received": 5000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Standard Wedding Photography & Videography Agreement",
+          "status": "pending",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Booking & Retainer</h2>\n<p>A non-refundable retainer fee of <strong>25%</strong> is required upon signing this contract to secure the shoot date(s). The balance amount shall be paid as per the agreed payment schedule.</p>\n\n<h2>2. Coverage & Services</h2>\n<p>Trufocus Photography agrees to provide the photographic and videographic coverage detailed in the Work Order. Any extra hours or additional services requested on-site will be billed separately.</p>\n\n<h2>3. Deliverables & Timeline</h2>\n<ul>\n  <li><strong>Edited High-Resolution Photos:</strong> Delivered within 21 to 30 working days after selection.</li>\n  <li><strong>Cinematic Teaser & Highlight Video:</strong> Delivered within 45 working days post-event.</li>\n  <li><strong>Photobooks & Printed Media:</strong> Delivered within 30 days after client album proof approval.</li>\n</ul>\n\n<h2>4. Copyright & Usage Rights</h2>\n<p>Trufocus Photography retains copyright for all images and video footage. The client is granted a non-exclusive license for personal usage, printing, and social media sharing.</p>\n\n<h2>5. Cancellation & Rescheduling</h2>\n<p>In the event of cancellation by the client, retainer payments remain non-refundable. Rescheduling is subject to studio calendar availability.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-163251",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:42:43.251Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Wedding",
+        "updated_at": "2026-08-05T06:42:43.251Z",
+        "booking_date": "2026-07-11",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Madhuri's Wedding",
+        "customer_name": "Madhuri",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-976",
+        "album_delivery_date": "2026-08-31",
+        "final_delivery_date": "2026-08-31",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785911946785",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785911706464",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785911851841-v8kc",
+                "remarks": "",
+                "end_time": "12:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "09:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-07-25",
+            "event_time": "10:00",
+            "event_type_id": "et-1",
+            "event_type_name": "Wedding",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9391556810",
+        "source": null,
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785911901577-6cz5",
+              "notes": "",
+              "amount": 2000,
+              "created_at": "2026-08-05T06:38:21.577Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-07-25",
+              "payment_mode": "UPI",
+              "transaction_ref": "\tt2607251618563010837450"
+            },
+            {
+              "id": "pay-1785911922962-txeo",
+              "notes": "",
+              "amount": 2000,
+              "created_at": "2026-08-05T06:38:42.962Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-07-27",
+              "payment_mode": "UPI",
+              "transaction_ref": "t2607271354245752293454"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 4000,
+          "gst_percent": 0,
+          "balance_amount": 0,
+          "package_amount": 4000,
+          "payment_status": "fully_paid",
+          "amount_received": 4000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-01",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-946785",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:39:06.785Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T06:39:06.785Z",
+        "booking_date": "2026-07-25",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Kiran's wedding",
+        "customer_name": "Kiran",
+        "payment_status": "fully_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-806",
+        "album_delivery_date": "2026-08-01",
+        "final_delivery_date": "2026-08-01",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785911544016",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": "Hotel Hilton",
+        "events": [
+          {
+            "id": "ev-1785911079681",
+            "notes": "",
+            "venue": "Hotel Hilton",
+            "services": [
+              {
+                "id": "srv-1785911143857-pflg",
+                "remarks": "",
+                "end_time": "22:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "18:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-07-21",
+            "event_time": "18:00",
+            "event_type_id": "et-8",
+            "event_type_name": "Corporate Event",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "6366357989",
+        "source": "phone_call",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [],
+          "gst_amount": 1620,
+          "net_amount": 10620,
+          "gst_percent": 18,
+          "balance_amount": 10620,
+          "package_amount": 9000,
+          "payment_status": "pending",
+          "amount_received": 0,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-10",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-544016",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:32:24.016Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Corporate Event",
+        "updated_at": "2026-08-05T06:32:24.016Z",
+        "booking_date": "2026-07-21",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Cocktail Party",
+        "customer_name": "DKMS Asia Pvt Ltd (Drithi)",
+        "payment_status": "pending",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-159",
+        "album_delivery_date": "2026-07-31",
+        "final_delivery_date": "2026-07-31",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785910976632",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785910684200",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785910718945-0vgy",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "09:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-06-17",
+            "event_time": "09:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "8095630589",
+        "source": null,
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785910833762-lsms",
+              "notes": "",
+              "amount": 5000,
+              "created_at": "2026-08-05T06:20:33.762Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-07-23",
+              "payment_mode": "UPI",
+              "transaction_ref": "5827931911"
+            },
+            {
+              "id": "pay-1785910950888-etlg",
+              "notes": "",
+              "amount": 7000,
+              "created_at": "2026-08-05T06:22:30.888Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-07-27",
+              "payment_mode": "UPI",
+              "transaction_ref": "5827931911"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 12000,
+          "gst_percent": 0,
+          "balance_amount": 0,
+          "package_amount": 12000,
+          "payment_status": "fully_paid",
+          "amount_received": 12000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-976633",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:22:56.633Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T06:22:56.633Z",
+        "booking_date": "2026-06-23",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Ashwini's Puberty Function",
+        "customer_name": "Ashwini Manjunath",
+        "payment_status": "fully_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-589",
+        "album_delivery_date": "2026-08-01",
+        "final_delivery_date": "2026-08-01",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785910542100",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785910380784",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785910410946-vf90",
+                "remarks": "",
+                "end_time": "22:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "17:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785910453796-eo97",
+                "remarks": "",
+                "end_time": "22:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "17:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-06-11",
+            "event_time": "17:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "7411921613",
+        "source": "instagram",
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785910516219-ttw4",
+              "notes": "",
+              "amount": 5000,
+              "created_at": "2026-08-05T06:15:16.219Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-06-30",
+              "payment_mode": "UPI",
+              "transaction_ref": "123772807069"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 23000,
+          "gst_percent": 0,
+          "balance_amount": 18000,
+          "package_amount": 23000,
+          "payment_status": "partially_paid",
+          "amount_received": 5000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Event Photography Agreement (Corporate / Parties)",
+          "status": "pending",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Scope of Work</h2>\n<p>The studio agrees to provide professional coverage as specified in the service agreement for the event duration.</p>\n\n<h2>2. Payment Terms</h2>\n<p>Payment must be settled in full within 7 business days following the conclusion of the event.</p>\n\n<h2>3. Delivery</h2>\n<p>Digital gallery files delivered within 10 business days.</p>",
+          "agreement_date": "2026-08-05",
+          "agreement_number": "AGR-542100",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-05T06:15:42.100Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-05T06:15:42.100Z",
+        "booking_date": "2026-06-02",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Sherin Joanna 1st Year Birthday Party",
+        "customer_name": "Anthony",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-940",
+        "album_delivery_date": "2026-08-30",
+        "final_delivery_date": "2026-08-30",
+        "contract_accepted_at": "2026-08-05",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785853783806",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785853148027",
+            "notes": "",
+            "venue": "Bride's Home",
+            "services": [
+              {
+                "id": "srv-1785853215968-skt7",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "08:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Photographer",
+                    "employee_id": "emp-1785767911514",
+                    "employee_name": "Ramesh"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853236675-l8pj",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "08:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Videographer",
+                    "employee_id": "fl-1785768094147",
+                    "employee_name": "Sreekar Babu"
+                  }
+                ]
+              }
+            ],
+            "event_date": "2026-08-17",
+            "event_time": "08:00",
+            "event_type_id": "et-4",
+            "event_type_name": "Haldi",
+            "google_map_link": ""
+          },
+          {
+            "id": "ev-1785853261321",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785853314579-vlvv",
+                "remarks": "",
+                "end_time": "16:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "08:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Photographer",
+                    "employee_id": "emp-1785767911514",
+                    "employee_name": "Ramesh"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853333848-u8lp",
+                "remarks": "",
+                "end_time": "16:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "08:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Videographer",
+                    "employee_id": "fl-1785768094147",
+                    "employee_name": "Sreekar Babu"
+                  }
+                ]
+              }
+            ],
+            "event_date": "2026-08-18",
+            "event_time": "08:00",
+            "event_type_id": "et-5",
+            "event_type_name": "Sangeet / Mehendi",
+            "google_map_link": ""
+          },
+          {
+            "id": "ev-1785853356617",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785853375900-3t03",
+                "remarks": "",
+                "end_time": "23:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "17:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Photographer",
+                    "employee_id": "emp-1785767911514",
+                    "employee_name": "Ramesh"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853400125-d67e",
+                "remarks": "",
+                "end_time": "23:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "17:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Videographer",
+                    "employee_id": "fl-1785768094147",
+                    "employee_name": "Sreekar Babu"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853420848-e689",
+                "remarks": "",
+                "end_time": "23:00",
+                "quantity": 1,
+                "service_id": "srv-2",
+                "start_time": "17:00",
+                "service_name": "Candid Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Candid Photographer",
+                    "employee_id": "fl-1785768027743",
+                    "employee_name": "Chidananda"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853454140-y0kb",
+                "remarks": "",
+                "end_time": "23:00",
+                "quantity": 1,
+                "service_id": "srv-6",
+                "start_time": "17:00",
+                "service_name": "LED Display Wall",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785855635824-1qzn",
+                "remarks": "",
+                "end_time": "23:00",
+                "quantity": 1,
+                "service_id": "srv-1785855532905",
+                "start_time": "06:00",
+                "service_name": "Spot Video Mixing",
+                "assigned_team": []
+              }
+            ],
+            "event_date": "2026-08-18",
+            "event_time": "17:00",
+            "event_type_id": "et-2",
+            "event_type_name": "Reception",
+            "google_map_link": ""
+          },
+          {
+            "id": "ev-1785853507879",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785853524589-y20h",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "06:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Photographer",
+                    "employee_id": "emp-1785767911514",
+                    "employee_name": "Ramesh"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853539815-oqq3",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-3",
+                "start_time": "06:00",
+                "service_name": "Traditional Videography",
+                "assigned_team": [
+                  {
+                    "role_title": "Traditional Videographer",
+                    "employee_id": "fl-1785768094147",
+                    "employee_name": "Sreekar Babu"
+                  }
+                ]
+              },
+              {
+                "id": "srv-1785853558970-a74x",
+                "remarks": "",
+                "end_time": "14:00",
+                "quantity": 1,
+                "service_id": "srv-2",
+                "start_time": "06:00",
+                "service_name": "Candid Photography",
+                "assigned_team": [
+                  {
+                    "role_title": "Candid Photographer",
+                    "employee_id": "fl-1785768027743",
+                    "employee_name": "Chidananda"
+                  }
+                ]
+              }
+            ],
+            "event_date": "2026-08-19",
+            "event_time": "06:00",
+            "event_type_id": "et-1",
+            "event_type_name": "Wedding",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9972231298",
+        "source": null,
+        "status": "upcoming",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785853687572-2pmm",
+              "notes": "Booking Advance received",
+              "amount": 5000,
+              "created_at": "2026-08-04T14:28:07.572Z",
+              "received_by": "Admin",
+              "payment_date": "2026-05-07",
+              "payment_mode": "UPI",
+              "transaction_ref": "8376575"
+            },
+            {
+              "id": "pay-1785853722200-47gs",
+              "notes": "Booking Advance received",
+              "amount": 50000,
+              "created_at": "2026-08-04T14:28:42.200Z",
+              "received_by": "Admin",
+              "payment_date": "2026-07-31",
+              "payment_mode": "Bank Transfer",
+              "transaction_ref": "8376575"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 150000,
+          "gst_percent": 0,
+          "balance_amount": 95000,
+          "package_amount": 150000,
+          "payment_status": "advance_received",
+          "amount_received": 55000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Standard Wedding Photography & Videography Agreement",
+          "status": "pending",
+          "valid_until": "2026-09-30",
+          "terms_content": "<h2>1. Booking & Retainer</h2>\n<p>A non-refundable retainer fee of <strong>25%</strong> is required upon signing this contract to secure the shoot date(s). The balance amount shall be paid as per the agreed payment schedule.</p>\n\n<h2>2. Coverage & Services</h2>\n<p>Trufocus Photography agrees to provide the photographic and videographic coverage detailed in the Work Order. Any extra hours or additional services requested on-site will be billed separately.</p>\n\n<h2>3. Deliverables & Timeline</h2>\n<ul>\n  <li><strong>Edited High-Resolution Photos:</strong> Delivered within 21 to 30 working days after selection.</li>\n  <li><strong>Cinematic Teaser & Highlight Video:</strong> Delivered within 45 working days post-event.</li>\n  <li><strong>Photobooks & Printed Media:</strong> Delivered within 30 days after client album proof approval.</li>\n</ul>\n\n<h2>4. Copyright & Usage Rights</h2>\n<p>Trufocus Photography retains copyright for all images and video footage. The client is granted a non-exclusive license for personal usage, printing, and social media sharing.</p>\n\n<h2>5. Cancellation & Rescheduling</h2>\n<p>In the event of cancellation by the client, retainer payments remain non-refundable. Rescheduling is subject to studio calendar availability.</p>",
+          "agreement_date": "2026-08-04",
+          "agreement_number": "AGR-783806",
+          "studio_signature": "Trufocus Photography",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-04T14:29:43.806Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": null,
+        "enquiry_id": null,
+        "event_type": "Wedding",
+        "updated_at": "2026-08-04T15:08:51.537Z",
+        "balance_due": 95000,
+        "booking_date": "2026-05-07",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "2 Albums",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "is_included": true,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "Trufocus Event Gallery",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Nageshwari & Sridhan's Wedding",
+        "customer_name": "Swetha",
+        "package_total": 150000,
+        "payment_status": "advance_received",
+        "pinterest_link": null,
+        "amount_received": 55000,
+        "contract_status": "pending",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-317",
+        "album_delivery_date": "2026-09-15",
+        "final_delivery_date": "2026-09-15",
+        "contract_accepted_at": "2026-08-04",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785838663401",
+        "city": "Bengalur",
+        "email": null,
+        "notes": null,
+        "venue": "Blue Pearl Banguet Hall  R T Nagar",
+        "events": [
+          {
+            "id": "ev-1785837421342",
+            "notes": "",
+            "venue": "Blue Peal Banquet Hall",
+            "services": [],
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "event_date": "2026-05-30",
+            "event_time": "18:00",
+            "event_type_id": "et-9",
+            "event_type_name": "Birthday / Private Party",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "7204031353",
+        "source": "other",
+        "status": "deleted",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785838198839-54v0",
+              "notes": "",
+              "amount": 4000,
+              "created_at": "2026-08-04T10:09:58.839Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-06-03",
+              "payment_mode": "UPI",
+              "transaction_ref": "t2606031512478274369653"
+            },
+            {
+              "id": "pay-1785838498114-h0oy",
+              "notes": "",
+              "amount": 10000,
+              "created_at": "2026-08-04T10:14:58.114Z",
+              "received_by": "Studio Accounts",
+              "payment_date": "2026-05-29",
+              "payment_mode": "UPI",
+              "transaction_ref": "615076132319"
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 18000,
+          "gst_percent": 0,
+          "balance_amount": 4000,
+          "package_amount": 18000,
+          "payment_status": "partially_paid",
+          "amount_received": 14000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Standard Photography Agreement",
+          "status": "pending",
+          "valid_until": "",
+          "terms_content": "<h2>Agreement Terms</h2>",
+          "agreement_date": "2026-08-04",
+          "agreement_number": "AGR-663401",
+          "studio_signature": "Trufocus Studio",
+          "customer_signature": ""
+        },
+        "is_draft": false,
+        "created_at": "2026-08-04T10:17:43.401Z",
+        "created_by": "usr_cloud_lookup",
+        "deleted_at": "2026-08-04T14:14:05.170Z",
+        "deleted_by": "Admin",
+        "enquiry_id": null,
+        "event_type": "Birthday / Private Party",
+        "updated_at": "2026-08-04T10:17:43.401Z",
+        "booking_date": "2026-05-29",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "deleted_at": "2026-08-04T14:14:05.170Z",
+            "is_included": false,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Maseeha Daugter Birthday",
+        "activity_logs": [
+          {
+            "id": "act_1785852845170",
+            "date": "2026-08-04T14:14:05.170Z",
+            "user": "Admin",
+            "action": "Work Order Soft Deleted",
+            "details": "Work Order soft deleted by Admin. Reason: N/A. All related records marked deleted."
+          }
+        ],
+        "customer_name": "Maseeha",
+        "delete_reason": "",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "contract_status": "pending",
+        "google_map_link": "https://maps.app.goo.gl/ghiHPMmhvmvcPr1N7",
+        "whatsapp_number": "7204031353",
+        "alternate_mobile": "7204031353",
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-377",
+        "album_delivery_date": null,
+        "final_delivery_date": null,
+        "contract_accepted_at": "2026-08-04",
+        "special_instructions": null
+      },
+      {
+        "id": "wo-1785729437016",
+        "city": "Bangalore",
+        "email": null,
+        "notes": null,
+        "venue": null,
+        "events": [
+          {
+            "id": "ev-1785729332212",
+            "notes": "",
+            "venue": "",
+            "services": [
+              {
+                "id": "srv-1785729356573-xh1v",
+                "remarks": "",
+                "end_time": "18:00",
+                "quantity": 1,
+                "service_id": "srv-1",
+                "start_time": "09:00",
+                "service_name": "Traditional Photography",
+                "assigned_team": []
+              },
+              {
+                "id": "srv-1785729364969-5mkt",
+                "remarks": "",
+                "end_time": "18:00",
+                "quantity": 1,
+                "service_id": "srv-2",
+                "start_time": "09:00",
+                "service_name": "Candid Photography",
+                "assigned_team": []
+              }
+            ],
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "event_date": "2026-08-20",
+            "event_time": "09:25",
+            "event_type_id": "et-3",
+            "event_type_name": "Engagement",
+            "google_map_link": ""
+          }
+        ],
+        "mobile": "9886184495",
+        "source": "instagram",
+        "status": "deleted",
+        "payment": {
+          "ledger": [
+            {
+              "id": "pay-1785729400366-fcv3",
+              "notes": "",
+              "amount": 5000,
+              "created_at": "2026-08-03T03:56:40.366Z",
+              "received_by": "Dayanand",
+              "payment_date": "2026-08-03",
+              "payment_mode": "Cash",
+              "transaction_ref": ""
+            }
+          ],
+          "gst_amount": 0,
+          "net_amount": 50000,
+          "gst_percent": 0,
+          "balance_amount": 45000,
+          "package_amount": 50000,
+          "payment_status": "partially_paid",
+          "amount_received": 5000,
+          "discount_amount": 0
+        },
+        "contract": {
+          "title": "Standard Wedding Photography & Videography Agreement",
+          "status": "signed",
+          "valid_until": "2026-08-31",
+          "terms_content": "<h2>1. Booking & Retainer</h2>\n<p>A non-refundable retainer fee of <strong>25%</strong> is required upon signing this contract to secure the shoot date(s). The balance amount shall be paid as per the agreed payment schedule.</p>\n\n<h2>2. Coverage & Services</h2>\n<p>Trufocus Photography agrees to provide the photographic and videographic coverage detailed in the Work Order. Any extra hours or additional services requested on-site will be billed separately.</p>\n\n<h2>3. Deliverables & Timeline</h2>\n<ul>\n  <li><strong>Edited High-Resolution Photos:</strong> Delivered within 21 to 30 working days after selection.</li>\n  <li><strong>Cinematic Teaser & Highlight Video:</strong> Delivered within 45 working days post-event.</li>\n  <li><strong>Photobooks & Printed Media:</strong> Delivered within 30 days after client album proof approval.</li>\n</ul>\n\n<h2>4. Copyright & Usage Rights</h2>\n<p>Trufocus Photography retains copyright for all images and video footage. The client is granted a non-exclusive license for personal usage, printing, and social media sharing.</p>\n\n<h2>5. Cancellation & Rescheduling</h2>\n<p>In the event of cancellation by the client, retainer payments remain non-refundable. Rescheduling is subject to studio calendar availability.</p>",
+          "agreement_date": "2026-08-03",
+          "agreement_number": "AGR-437016",
+          "studio_signature": "Trufocus Photography",
+          "customer_signature": "Sharma"
+        },
+        "is_draft": false,
+        "created_at": "2026-08-03T03:57:17.016Z",
+        "created_by": "usr_1785726475882",
+        "deleted_at": "2026-08-04T09:02:39.276Z",
+        "deleted_by": "Admin",
+        "enquiry_id": null,
+        "event_type": "Engagement",
+        "updated_at": "2026-08-03T03:58:19.063Z",
+        "booking_date": "2026-08-03",
+        "contract_url": null,
+        "deliverables": [
+          {
+            "name": "Edited Photos",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": true,
+            "deliverable_id": "del-1"
+          },
+          {
+            "name": "Traditional Video",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-2"
+          },
+          {
+            "name": "Cinematic Film",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-3"
+          },
+          {
+            "name": "Instagram Reel",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-4"
+          },
+          {
+            "name": "Highlight Film",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": true,
+            "deliverable_id": "del-5"
+          },
+          {
+            "name": "Luxury Album",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": true,
+            "deliverable_id": "del-6"
+          },
+          {
+            "name": "Mini Album",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-7"
+          },
+          {
+            "name": "Photo Frame",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-8"
+          },
+          {
+            "name": "Canvas Print",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-9"
+          },
+          {
+            "name": "Pen Drive",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": false,
+            "deliverable_id": "del-10"
+          },
+          {
+            "name": "Online Gallery",
+            "notes": "",
+            "deleted_at": "2026-08-04T09:02:39.276Z",
+            "is_included": true,
+            "deliverable_id": "del-11"
+          }
+        ],
+        "project_name": "Sharma's wedding",
+        "activity_logs": [
+          {
+            "id": "act_1785834159276",
+            "date": "2026-08-04T09:02:39.276Z",
+            "user": "Admin",
+            "action": "Work Order Soft Deleted",
+            "details": "Work Order soft deleted by Admin. Reason: N/A. All related records marked deleted."
+          },
+          {
+            "id": "act_1785729499063",
+            "date": "2026-08-03T03:58:19.063Z",
+            "user": "Sharma",
+            "action": "Digital Contract Signed & Project Acknowledged",
+            "details": "Digitally signed contract agreement ('Sharma') from Desktop (Chrome)"
+          }
+        ],
+        "customer_name": "Sharma",
+        "delete_reason": "",
+        "payment_status": "partially_paid",
+        "pinterest_link": null,
+        "acknowledgement": {
+          "id": "ack_1785729499063",
+          "device": "Desktop",
+          "browser": "Chrome",
+          "created_at": "2026-08-03T03:58:19.063Z",
+          "acknowledged": true,
+          "customer_name": "Sharma",
+          "work_order_id": "wo-1785729437016",
+          "acknowledged_at": "2026-08-03T03:58:19.063Z"
+        },
+        "contract_status": "signed",
+        "google_map_link": null,
+        "whatsapp_number": null,
+        "alternate_mobile": null,
+        "progress_percent": 15,
+        "work_order_number": "WO-2025-521",
+        "album_delivery_date": "2026-08-30",
+        "final_delivery_date": "2026-08-30",
+        "contract_accepted_at": "2026-08-03T03:58:19.063Z",
+        "special_instructions": null
+      }
+    ],
+    "created_at": "2026-08-04T14:29:45.462881+00:00",
+    "updated_at": "2026-08-05T09:28:38.704+00:00"
+  }
+]
