@@ -1,4 +1,1 @@
-/api/ai/chat    /.netlify/functions/chat    200!
-/api/ai/image   /.netlify/functions/image   200!
-/api/ai/models  /.netlify/functions/models  200!
-/*              /index.html                 200
+﻿/*    /index.html   200
