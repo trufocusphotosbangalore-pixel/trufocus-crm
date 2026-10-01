@@ -929,7 +929,7 @@ export function subscribeToEmployeeRealtimeChanges(onSyncCallback: (accounts: Us
       .on(
         'postgres_changes',
         { event: '*', schema: 'public' },
-        async (payload) => {
+        async (payload: any) => {
           esLog('REALTIME', { component: 'EmployeeService', service: 'subscribeToEmployeeRealtimeChanges', table: payload.table, eventType: payload.eventType, payload })
           if (payload.table === 'user_accounts' || payload.table === 'team_members') {
             try {
@@ -943,7 +943,7 @@ export function subscribeToEmployeeRealtimeChanges(onSyncCallback: (accounts: Us
           }
         }
       )
-      .subscribe((status) => {
+      .subscribe((status: any) => {
         if (status === 'SUBSCRIBED') {
           esLog('REALTIME', { component: 'EmployeeService', service: 'subscribeToEmployeeRealtimeChanges', status: 'SUBSCRIBED' })
         } else {

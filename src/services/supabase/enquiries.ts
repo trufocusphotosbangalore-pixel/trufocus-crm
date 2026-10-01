@@ -200,7 +200,7 @@ export async function fetchEnquiries(
       .is('deleted_at', null)
 
     if (!error && data && data.length > 0) {
-      let items: Enquiry[] = data.map((row) => ({
+      let items: Enquiry[] = data.map((row: any) => ({
         ...row,
         assigned_to_name: (row.assigned_to_profile as { full_name: string } | null)?.full_name ?? null,
         assigned_to_profile: undefined,

@@ -158,7 +158,7 @@ export async function fetchQuotations(): Promise<Quotation[]> {
     try {
       const { data, error } = await supabase.from(TABLE).select('*').order('created_at', { ascending: false })
       if (!error && data && data.length > 0) {
-        const cloudItems: Quotation[] = data.map((row) => row.data || row)
+        const cloudItems: Quotation[] = data.map((row: any) => row.data || row)
         saveLocalQuotationsRaw(cloudItems)
         return cloudItems
       }

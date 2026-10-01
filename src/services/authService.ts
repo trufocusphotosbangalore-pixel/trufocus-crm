@@ -1,37 +1,58 @@
-import { supabase } from './supabase/client'
-import * as supabaseAuth from './supabase/auth'
+﻿import { auth } from './firebase/client'
+import * as firebaseAuth from './firebase/auth'
 import { fetchAllEmployeesFromCloud } from './employeeService'
+import { onAuthStateChanged } from 'firebase/auth'
 
 export async function signIn(
   email: string,
   password: string,
   customProfile?: Partial<import('@/types/auth').Profile>
 ) {
-  return supabaseAuth.signIn(email, password, customProfile)
+  return firebaseAuth.signIn(email, password, customProfile)
 }
 
 export async function signOut() {
-  return supabaseAuth.signOut()
+  return firebaseAuth.signOut()
 }
 
 export async function resetPasswordForEmail(email: string) {
-  return supabaseAuth.resetPasswordForEmail(email)
+  return firebaseAuth.resetPasswordForEmail(email)
 }
 
 export async function updatePassword(newPassword: string) {
-  return supabaseAuth.updatePassword(newPassword)
+  return firebaseAuth.updatePassword(newPassword)
 }
 
 export async function getSession() {
-  return supabaseAuth.getSession()
+  return firebaseAuth.getSession()
 }
 
 export async function getProfile(userId: string, email?: string) {
-  return supabaseAuth.getProfile(userId, email)
+  return firebaseAuth.getProfile(userId, email)
 }
 
 export function onAuthStateChange(callback: (event: string, session: any) => void) {
-  return supabase.auth.onAuthStateChange(callback)
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      callback('SIGNED_IN', {
+        user: {
+          id: user.uid,
+          email: user.email,
+          user_metadata: { full_name: user.displayName }
+        }
+      })
+    } else {
+      callback('SIGNED_OUT', null)
+    }
+  })
+
+  return {
+    data: {
+      subscription: {
+        unsubscribe
+      }
+    }
+  }
 }
 
 export async function resolveLoginIdentifier(usernameOrEmail: string): Promise<string> {

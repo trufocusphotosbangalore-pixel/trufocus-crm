@@ -45,8 +45,8 @@ export function useAuthProvider(): AuthContextValue {
   const [user, setUser] = useState<Profile | null>(() => getSavedSessionProfile())
   const [isLoading, setIsLoading] = useState(true)
 
-  /** Build a fallback profile from a Supabase auth user */
-  const buildFallbackProfile = (authUser: { id: string; email?: string; user_metadata?: Record<string, string> }): Profile => ({
+  /** Build a fallback profile from an auth user */
+  const buildFallbackProfile = (authUser: { id: string; email?: string | null; user_metadata?: any }): Profile => ({
     id: authUser.id,
     email: authUser.email ?? '',
     full_name: authUser.user_metadata?.full_name ?? (authUser.email ? authUser.email.split('@')[0] : 'Staff Member'),

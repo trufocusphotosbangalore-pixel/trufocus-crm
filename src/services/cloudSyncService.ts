@@ -1,11 +1,18 @@
-import { supabase } from '@/services/supabase/client'
+﻿import { db } from '@/services/firebase/client'
+import {
+  collection,
+  doc,
+  getDocs,
+  setDoc,
+  onSnapshot
+} from 'firebase/firestore'
 import { fetchAllEmployeesFromCloud } from './employeeService'
 
 /**
- * Centralized Cloud Database Sync Service
+ * Centralized Cloud Database Sync Service (Firebase / Firestore)
  * Handles multi-device cloud persistence for Work Orders, Enquiries, Team Members,
  * Business Profile, Customer Portals, Finance, Post Production, Data Storage,
- * Client Requests, and Settings via Supabase Database & Realtime WebSockets.
+ * Client Requests, and Settings via Firestore.
  */
 
 export interface CloudSyncStatus {
@@ -15,8 +22,7 @@ export interface CloudSyncStatus {
 }
 
 export function isCloudConfigured(): boolean {
-  const url = import.meta.env.VITE_SUPABASE_URL as string
-  return Boolean(url && url.trim().length > 0 && !url.includes('placeholder.supabase.co'))
+  return true
 }
 
 /** Broadcast local event to notify UI components across tabs and devices */
@@ -41,27 +47,23 @@ export function broadcastCloudSync(entity: string, payload?: any): void {
   }
 }
 
-/** Push entity payload to Supabase DB asynchronously */
+/** Push entity payload to Firestore DB asynchronously */
 export async function pushEntityToCloud(table: string, id: string, record: any): Promise<boolean> {
-  if (!isCloudConfigured()) return false
   try {
-    const { error } = await supabase.from(table).upsert({
+    const docRef = doc(db, table, id)
+    await setDoc(docRef, {
       id,
       data: record,
       updated_at: new Date().toISOString(),
-    })
-    if (error) {
-      console.warn(`[CloudSync] Warning writing to table '${table}':`, error.message)
-      return false
-    }
+    }, { merge: true })
     return true
-  } catch (e) {
-    console.warn(`[CloudSync] Network exception writing to table '${table}':`, e)
+  } catch (e: any) {
+    console.warn(`[CloudSync] Exception writing to collection '${table}':`, e.message || e)
     return false
   }
 }
 
-/** Helper to flatten and extract entities from Supabase rows (array payload id='main' and individual rows) */
+/** Helper to flatten and extract entities from Firestore documents */
 export function extractEntitiesFromCloudRows<T = any>(rows: any[]): T[] {
   if (!rows || !Array.isArray(rows)) return []
 
@@ -91,70 +93,60 @@ export function extractEntitiesFromCloudRows<T = any>(rows: any[]): T[] {
   return Array.from(entityMap.values())
 }
 
-/** Pull all records for a table from Supabase DB */
+/** Pull all records for a collection from Firestore */
 export async function pullTableFromCloud(table: string): Promise<any[] | null> {
-  if (!isCloudConfigured()) return null
   try {
-    const { data, error } = await supabase.from(table).select('*')
-    if (error || !data) {
-      console.warn(`[CloudSync] Warning reading table '${table}':`, error?.message)
-      return null
-    }
-    return data.map((row) => row.data || row)
-  } catch (e) {
-    console.warn(`[CloudSync] Network exception reading table '${table}':`, e)
+    const colRef = collection(db, table)
+    const snapshot = await getDocs(colRef)
+    const items: any[] = []
+    snapshot.forEach((d) => {
+      const data = d.data()
+      items.push(data.data !== undefined ? data.data : data)
+    })
+    return items
+  } catch (e: any) {
+    console.warn(`[CloudSync] Exception reading collection '${table}':`, e.message || e)
     return null
   }
 }
 
-let activeRealtimeChannel: ReturnType<typeof supabase.channel> | null = null
 const activeRealtimeCallbacks = new Set<() => void>()
+let unsubscribers: Array<() => void> = []
 
-/** Initialize Supabase Realtime WebSocket Listener for multi-device sync */
+/** Initialize Firestore Realtime Listener for multi-device sync */
 export function initRealtimeCloudListener(onSyncCallback: () => void): () => void {
-  if (!isCloudConfigured()) return () => {}
-
   activeRealtimeCallbacks.add(onSyncCallback)
 
-  if (!activeRealtimeChannel) {
-    try {
-      activeRealtimeChannel = supabase
-        .channel('trufocus-cloud-realtime-sync')
-        .on(
-          'postgres_changes',
-          { event: '*', schema: 'public' },
-          async (payload) => {
-            // NOTE: Do not cache permissions or role assignments in localStorage.
-            // Permissions must be sourced via permissionService/teamAccessStore only.
-            broadcastCloudSync(payload.table || 'all', payload.new)
-            activeRealtimeCallbacks.forEach((cb) => {
-              try { cb() } catch (e) { console.error('Realtime sync callback error:', e) }
-            })
-          }
-        )
-        .subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            console.log('🌐 Connected to Supabase Cloud DB Realtime Channel')
-          }
+  if (unsubscribers.length === 0) {
+    const collectionsToListen = ['work_orders', 'enquiries', 'business_profile', 'finance_payments']
+    collectionsToListen.forEach((colName) => {
+      try {
+        const unsub = onSnapshot(collection(db, colName), () => {
+          broadcastCloudSync(colName)
+          activeRealtimeCallbacks.forEach((cb) => {
+            try { cb() } catch (err) { console.error('Realtime sync callback error:', err) }
+          })
+        }, (err) => {
+          console.warn(`[Firestore Realtime] Listener error on ${colName}:`, err)
         })
-    } catch (e) {
-      console.error('Error initializing Supabase Realtime Listener:', e)
-    }
+        unsubscribers.push(unsub)
+      } catch (e) {
+        console.warn(`[Firestore Realtime] Failed listener on ${colName}:`, e)
+      }
+    })
   }
 
   return () => {
     activeRealtimeCallbacks.delete(onSyncCallback)
-    if (activeRealtimeCallbacks.size === 0 && activeRealtimeChannel) {
-      supabase.removeChannel(activeRealtimeChannel)
-      activeRealtimeChannel = null
+    if (activeRealtimeCallbacks.size === 0) {
+      unsubscribers.forEach((u) => u())
+      unsubscribers = []
     }
   }
 }
 
-/** Hydrate all local stores from Supabase Cloud DB on application launch */
+/** Hydrate all local stores from Firestore on application launch */
 export async function initCloudDatabaseSync(): Promise<void> {
-  if (!isCloudConfigured()) return
-
   try {
     // 1. Sync Business Profile
     const profileRows = await pullTableFromCloud('business_profile')
@@ -200,12 +192,12 @@ export async function initCloudDatabaseSync(): Promise<void> {
       }
     }
 
-    // 4. Sync Team Members (handled via EmployeeService canonical fetch)
+    // 4. Sync Team Members
     try {
       await fetchAllEmployeesFromCloud()
       broadcastCloudSync('team', null)
     } catch (e) {
-      console.warn('[Cloud Sync] Failed to hydrate team members via EmployeeService:', e)
+      console.warn('[Cloud Sync] Failed to hydrate team members:', e)
     }
 
     // 5. Sync Finance Payments
@@ -216,7 +208,7 @@ export async function initCloudDatabaseSync(): Promise<void> {
       broadcastCloudSync('finance', payData)
     }
 
-    // 7. Sync Post Production Deliverables
+    // 6. Sync Post Production Deliverables
     const postProdRows = await pullTableFromCloud('post_production')
     if (postProdRows && postProdRows.length > 0) {
       let postProdData = postProdRows[0]
@@ -232,8 +224,8 @@ export async function initCloudDatabaseSync(): Promise<void> {
       }
     }
 
-    console.log('✅ Cloud Database Hydration completed successfully!')
+    console.log('✅ Firebase Cloud Database Hydration completed successfully!')
   } catch (e) {
-    console.warn('Notice: Cloud Database Hydration skipped:', e)
+    console.warn('Notice: Firebase Cloud Database Hydration skipped:', e)
   }
 }
