@@ -84,7 +84,7 @@ export default function WorkOrders() {
   const {
     result, isLoading, filters, sort, page, pageSize,
     setFilters, resetFilters, setSort, setPage, setPageSize,
-    createWorkOrder, updateWorkOrder, deleteWorkOrder,
+    createWorkOrder, updateWorkOrder, deleteWorkOrder, refresh,
   } = useWorkOrders()
 
   const [activeTab, setActiveTab] = useState<TabId>('work-orders')
@@ -195,13 +195,8 @@ export default function WorkOrders() {
     }
   }
 
-  const handleDelete = async (id: string) => {
-    const { error } = await deleteWorkOrder(id)
-    if (error) {
-      toast.error('Failed to delete work order.')
-    } else {
-      toast.success('Work order deleted.')
-    }
+  const handleDelete = async (_id: string) => {
+    refresh()
   }
 
   const handleExport = () => {

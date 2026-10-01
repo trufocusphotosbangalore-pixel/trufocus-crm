@@ -2376,9 +2376,9 @@ const INITIAL_FALLBACK_WORK_ORDERS: any[] = [
 export function getLocalWorkOrders(): WorkOrder[] {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_WO_KEY)
-    if (raw) {
+    if (raw !== null) {
       const items: WorkOrder[] = JSON.parse(raw)
-      if (Array.isArray(items) && items.length > 0) {
+      if (Array.isArray(items)) {
         return items.map((wo) => recalculateWorkOrderFinancials(wo))
       }
     }
@@ -2554,14 +2554,69 @@ export async function fetchWorkOrders(
           const localItems = getLocalWorkOrders()
           const mergedMap = new Map<string, WorkOrder>()
 
-          cloudItems.forEach((w) => mergedMap.set(w.id || w.work_order_number, w))
+          const allKeys = new Set([
+            ...cloudItems.map((w) => w.id || w.work_order_number),
+            ...localItems.map((w) => w.id || w.work_order_number),
+          ])
+
+          const cloudMap = new Map<string, WorkOrder>()
+          cloudItems.forEach((w) => {
+            const k = w.id || w.work_order_number
+            if (k) cloudMap.set(k, w)
+          })
+
+          const localMap = new Map<string, WorkOrder>()
           localItems.forEach((w) => {
-            const key = w.id || w.work_order_number
-            if (key && !mergedMap.has(key)) mergedMap.set(key, w)
+            const k = w.id || w.work_order_number
+            if (k) localMap.set(k, w)
+          })
+
+          let localHadChanges = false
+
+          allKeys.forEach((key) => {
+            if (!key) return
+            const cItem = cloudMap.get(key)
+            const lItem = localMap.get(key)
+
+            if (cItem && lItem) {
+              const cTime = new Date(cItem.updated_at || cItem.created_at || 0).getTime()
+              const lTime = new Date(lItem.updated_at || lItem.created_at || 0).getTime()
+
+              const lDeleted = Boolean(lItem.deleted_at || lItem.status === 'deleted')
+              const cDeleted = Boolean(cItem.deleted_at || cItem.status === 'deleted')
+
+              if (lDeleted && !cDeleted) {
+                const lDelTime = new Date(lItem.deleted_at || lItem.updated_at || 0).getTime()
+                if (lDelTime >= cTime) {
+                  mergedMap.set(key, lItem)
+                  localHadChanges = true
+                } else {
+                  mergedMap.set(key, cItem)
+                }
+              } else if (cDeleted && !lDeleted) {
+                const cDelTime = new Date(cItem.deleted_at || cItem.updated_at || 0).getTime()
+                if (cDelTime >= lTime) {
+                  mergedMap.set(key, cItem)
+                } else {
+                  mergedMap.set(key, lItem)
+                  localHadChanges = true
+                }
+              } else {
+                mergedMap.set(key, lTime >= cTime ? lItem : cItem)
+              }
+            } else if (cItem) {
+              mergedMap.set(key, cItem)
+            } else if (lItem) {
+              mergedMap.set(key, lItem)
+              localHadChanges = true
+            }
           })
 
           const mergedList = Array.from(mergedMap.values())
           saveLocalWorkOrdersOnly(mergedList)
+          if (localHadChanges) {
+            pushEntityToCloud('work_orders', 'main', mergedList)
+          }
         }
       }
     } catch (e) {
@@ -2870,23 +2925,12 @@ function updateWorkOrderLocal(id: string, updates: Partial<WorkOrder>): ApiRespo
 
 // ─── Soft Delete ──────────────────────────────────────────────────────────────
 
-export async function deleteWorkOrder(id: string): Promise<ApiResponse<null>> {
-  try {
-    const { error } = await supabase
-      .from(TABLE).update({ deleted_at: new Date().toISOString() }).eq('id', id)
-    if (error) {
-      deleteWorkOrderLocal(id)
-    }
-  } catch {
-    deleteWorkOrderLocal(id)
+export async function deleteWorkOrder(id: string, deletedBy = 'Admin', reason = ''): Promise<ApiResponse<null>> {
+  const res = softDeleteWorkOrder(id, deletedBy, reason)
+  if (!res.success) {
+    return { data: null, error: res.message }
   }
   return { data: null, error: null }
-}
-
-function deleteWorkOrderLocal(id: string) {
-  const existing = getLocalWorkOrders()
-  const filtered = existing.filter(item => item.id !== id)
-  saveLocalWorkOrders(filtered)
 }
 
 // ─── Export CSV ───────────────────────────────────────────────────────────────
@@ -3370,7 +3414,7 @@ export function softDeleteWorkOrder(
   purgeWorkOrderDataFromEverywhere(wo.id, wo.work_order_number)
 
   try {
-    localStorage.setItem(LOCAL_STORAGE_WO_KEY, JSON.stringify(existingList))
+    saveLocalWorkOrders(existingList)
     broadcastPaymentSync({ workOrderId: wo.id, action: 'WORK_ORDER_DELETED' })
     window.dispatchEvent(new CustomEvent('workOrdersUpdated'))
     window.dispatchEvent(new CustomEvent('enquiriesUpdated'))
@@ -3427,7 +3471,7 @@ export function restoreWorkOrder(
   existingList[woIndex] = wo
 
   try {
-    localStorage.setItem(LOCAL_STORAGE_WO_KEY, JSON.stringify(existingList))
+    saveLocalWorkOrders(existingList)
     broadcastPaymentSync({ workOrderId: wo.id, action: 'WORK_ORDER_RESTORED' })
     window.dispatchEvent(new CustomEvent('workOrdersUpdated'))
     window.dispatchEvent(new CustomEvent('enquiriesUpdated'))
@@ -3478,7 +3522,7 @@ export function hardDeleteWorkOrder(
   purgeWorkOrderDataFromEverywhere(target.id, target.work_order_number)
 
   try {
-    localStorage.setItem(LOCAL_STORAGE_WO_KEY, JSON.stringify(updatedList))
+    saveLocalWorkOrders(updatedList)
     broadcastPaymentSync({ workOrderId: id, action: 'WORK_ORDER_PERMANENTLY_DELETED' })
     window.dispatchEvent(new CustomEvent('workOrdersUpdated'))
     window.dispatchEvent(new CustomEvent('enquiriesUpdated'))

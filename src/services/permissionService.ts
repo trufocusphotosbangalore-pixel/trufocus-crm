@@ -72,9 +72,31 @@ export function hasPermission(
   }
 }
 
-export function canPerformDelete(_moduleId?: CrmModuleId, roleId?: string) {
-  const activeRole = roleId || getActiveRoleId()
-  return activeRole === 'owner' || activeRole === 'administrator'
+export function canPerformDelete(moduleId?: CrmModuleId, roleId?: string) {
+  let activeRole = (roleId || getActiveRoleId() || '').toLowerCase()
+  if (!activeRole || activeRole === 'manager') {
+    try {
+      const raw = localStorage.getItem('trufocus_active_crm_session_v1')
+      if (raw) {
+        const u = JSON.parse(raw)
+        const detected = (u.workspace_role || u.role_id || u.role || u.system_role || '').toLowerCase()
+        if (detected) activeRole = detected
+      }
+    } catch {}
+  }
+  if (
+    activeRole === 'owner' ||
+    activeRole === 'administrator' ||
+    activeRole === 'admin' ||
+    activeRole === 'manager'
+  ) {
+    return true
+  }
+  if (moduleId) {
+    const perm = getModulePermissions(moduleId, activeRole)
+    if (perm && perm.delete) return true
+  }
+  return false
 }
 
 export function canUserPerformDelete(moduleId?: CrmModuleId, roleId?: string) {
