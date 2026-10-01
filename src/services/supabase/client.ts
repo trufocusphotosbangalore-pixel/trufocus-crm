@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Firebase Firestore Compatibility Bridge for legacy `supabase` queries.
  * Emulates the .from(table).select().insert().update().delete().eq().single() API
  * and delegates read/write calls to Firestore collections directly!
@@ -75,7 +75,18 @@ class FirestoreQueryBuilder {
       const list: any[] = []
       snap.forEach((d) => {
         const row = d.data()
-        const unnested = (row && row.data !== undefined) ? (typeof row.data === 'object' ? { id: d.id, ...row.data } : row.data) : { id: d.id, ...row }
+        let unnested: any
+        if (row && row.data !== undefined) {
+          if (Array.isArray(row.data)) {
+            unnested = row.data
+          } else if (typeof row.data === 'object' && row.data !== null) {
+            unnested = { id: d.id, ...row.data }
+          } else {
+            unnested = row.data
+          }
+        } else {
+          unnested = { id: d.id, ...row }
+        }
         list.push(unnested)
       })
 
