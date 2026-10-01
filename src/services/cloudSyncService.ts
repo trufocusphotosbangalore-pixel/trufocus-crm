@@ -1,4 +1,4 @@
-﻿import { db } from '@/services/firebase/client'
+import { db } from '@/services/firebase/client'
 import {
   collection,
   doc,
@@ -150,46 +150,89 @@ export async function initCloudDatabaseSync(): Promise<void> {
   try {
     // 1. Sync Business Profile
     const profileRows = await pullTableFromCloud('business_profile')
+    const localProfileStr = localStorage.getItem('trufocus_crm_business_profile_v1')
     if (profileRows && profileRows.length > 0) {
       const latestProfile = profileRows[0]
       if (latestProfile && typeof latestProfile === 'object') {
         localStorage.setItem('trufocus_crm_business_profile_v1', JSON.stringify(latestProfile))
         broadcastCloudSync('business_profile', latestProfile)
       }
+    } else if (localProfileStr) {
+      try {
+        const localProfile = JSON.parse(localProfileStr)
+        await pushEntityToCloud('business_profile', 'main', localProfile)
+      } catch {}
     }
 
     // 2. Sync Work Orders
     const rawWoRows = await pullTableFromCloud('work_orders')
+    const localWOsStr = localStorage.getItem('trufocus_crm_work_orders_v1')
+    let localWOs: any[] = []
+    if (localWOsStr) {
+      try { localWOs = JSON.parse(localWOsStr) } catch (e) {}
+    }
+
     if (rawWoRows && rawWoRows.length > 0) {
       const cloudWOs = extractEntitiesFromCloudRows(rawWoRows)
       if (cloudWOs.length > 0) {
-        const localWOsStr = localStorage.getItem('trufocus_crm_work_orders_v1')
-        let localWOs: any[] = []
-        if (localWOsStr) {
-          try { localWOs = JSON.parse(localWOsStr) } catch (e) {}
-        }
         const mergedMap = new Map<string, any>()
         cloudWOs.forEach((w: any) => mergedMap.set(w.id || w.work_order_number, w))
+        let hasNewLocal = false
         if (Array.isArray(localWOs)) {
           localWOs.forEach((w: any) => {
             const key = w.id || w.work_order_number
-            if (key && !mergedMap.has(key)) mergedMap.set(key, w)
+            if (key && !mergedMap.has(key)) {
+              mergedMap.set(key, w)
+              hasNewLocal = true
+            }
           })
         }
         const mergedList = Array.from(mergedMap.values())
         localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify(mergedList))
         broadcastCloudSync('work_orders', mergedList)
+
+        if (hasNewLocal) {
+          pushEntityToCloud('work_orders', 'main', mergedList)
+        }
       }
+    } else if (Array.isArray(localWOs) && localWOs.length > 0) {
+      // Cloud is empty, seed cloud with existing local work orders
+      await pushEntityToCloud('work_orders', 'main', localWOs)
     }
 
     // 3. Sync Enquiries
     const rawEnqRows = await pullTableFromCloud('enquiries')
+    const localEnqsStr = localStorage.getItem('trufocus_crm_enquiries_v1')
+    let localEnqs: any[] = []
+    if (localEnqsStr) {
+      try { localEnqs = JSON.parse(localEnqsStr) } catch (e) {}
+    }
+
     if (rawEnqRows && rawEnqRows.length > 0) {
       const cloudEnqs = extractEntitiesFromCloudRows(rawEnqRows)
       if (cloudEnqs.length > 0) {
-        localStorage.setItem('trufocus_crm_enquiries_v1', JSON.stringify(cloudEnqs))
-        broadcastCloudSync('enquiries', cloudEnqs)
+        const mergedMap = new Map<string, any>()
+        cloudEnqs.forEach((e: any) => mergedMap.set(e.id || e.enquiry_number, e))
+        let hasNewLocal = false
+        if (Array.isArray(localEnqs)) {
+          localEnqs.forEach((e: any) => {
+            const key = e.id || e.enquiry_number
+            if (key && !mergedMap.has(key)) {
+              mergedMap.set(key, e)
+              hasNewLocal = true
+            }
+          })
+        }
+        const mergedList = Array.from(mergedMap.values())
+        localStorage.setItem('trufocus_crm_enquiries_v1', JSON.stringify(mergedList))
+        broadcastCloudSync('enquiries', mergedList)
+
+        if (hasNewLocal) {
+          pushEntityToCloud('enquiries', 'main', mergedList)
+        }
       }
+    } else if (Array.isArray(localEnqs) && localEnqs.length > 0) {
+      await pushEntityToCloud('enquiries', 'main', localEnqs)
     }
 
     // 4. Sync Team Members
@@ -202,14 +245,21 @@ export async function initCloudDatabaseSync(): Promise<void> {
 
     // 5. Sync Finance Payments
     const payRows = await pullTableFromCloud('finance_payments')
+    const localPayStr = localStorage.getItem('trufocus_crm_payments_v1')
     if (payRows && payRows.length > 0) {
       const payData = Array.isArray(payRows[0]) ? payRows[0] : payRows
       localStorage.setItem('trufocus_crm_payments_v1', JSON.stringify(payData))
       broadcastCloudSync('finance', payData)
+    } else if (localPayStr) {
+      try {
+        const localPay = JSON.parse(localPayStr)
+        if (localPay) await pushEntityToCloud('finance_payments', 'main', localPay)
+      } catch {}
     }
 
     // 6. Sync Post Production Deliverables
     const postProdRows = await pullTableFromCloud('post_production')
+    const localPostProdStr = localStorage.getItem('trufocus_crm_post_production_v1')
     if (postProdRows && postProdRows.length > 0) {
       let postProdData = postProdRows[0]
       if (postProdData && typeof postProdData === 'object' && !Array.isArray(postProdData) && Array.isArray(postProdData.data)) {
@@ -222,6 +272,11 @@ export async function initCloudDatabaseSync(): Promise<void> {
         localStorage.setItem('trufocus_crm_post_production_v1', JSON.stringify(postProdData))
         broadcastCloudSync('post_production', postProdData)
       }
+    } else if (localPostProdStr) {
+      try {
+        const localPostProd = JSON.parse(localPostProdStr)
+        if (localPostProd) await pushEntityToCloud('post_production', 'main', localPostProd)
+      } catch {}
     }
 
     console.log('✅ Firebase Cloud Database Hydration completed successfully!')
