@@ -191,7 +191,10 @@ export function WorkOrderViewDrawer({ workOrder: wo, onClose, onEdit, onSharePor
                                   <div className="flex flex-wrap gap-1 text-[10px] text-[var(--color-primary)]">
                                     <span>Assigned:</span>
                                     {srv.assigned_team.map((t) => (
-                                      <span key={t.employee_id} className="font-semibold">{t.employee_name}</span>
+                                      <span key={t.employee_id} className="font-semibold">
+                                        {t.employee_name}
+                                        {t.assigned_camera && <span className="opacity-80 font-normal"> (📷 {t.assigned_camera})</span>}
+                                      </span>
                                     ))}
                                   </div>
                                 )}

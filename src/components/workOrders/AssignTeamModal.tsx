@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
-import { X, Check, Users, Search, AlertCircle } from 'lucide-react'
+import { X, Check, Users, Search, AlertCircle, Camera } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { getTeamMembers } from '@/services/teamStore'
 import { fetchAllEmployeesFromCloud } from '@/services/employeeService'
+import { getCamerasForAssignment, type EquipmentItem } from '@/services/equipmentService'
 import type { UserAccount } from '@/types/teamLogin'
 import type { TeamMember } from '@/types/team'
 import type { WizardTeamAssignment } from '@/types/workOrders'
@@ -30,18 +31,28 @@ export function AssignTeamModal({
   onSave,
 }: AssignTeamModalProps) {
   const [cloudEmployees, setCloudEmployees] = useState<UserAccount[]>([])
+  const [availableCameras, setAvailableCameras] = useState<EquipmentItem[]>([])
+  const [selectedStaffCameras, setSelectedStaffCameras] = useState<Record<string, { cameraName: string; equipmentId: string }>>({})
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     let isMounted = true
+    setAvailableCameras(getCamerasForAssignment())
     fetchAllEmployeesFromCloud().then((data) => {
       if (isMounted && data && data.length > 0) {
         setCloudEmployees(data.filter((e) => e.status === 'active' || e.account_status === 'active'))
       }
     })
+
+    const handleGearSync = () => {
+      setAvailableCameras(getCamerasForAssignment())
+    }
+    window.addEventListener('trufocus_equipment_updated', handleGearSync)
+
     return () => {
       isMounted = false
+      window.removeEventListener('trufocus_equipment_updated', handleGearSync)
     }
   }, [])
 
@@ -53,6 +64,16 @@ export function AssignTeamModal({
     if (isOpen) {
       const initial = new Set((assignedTeam || []).map((t) => t.employee_id))
       setSelectedIds(initial)
+      const initialCameras: Record<string, { cameraName: string; equipmentId: string }> = {}
+      ;(assignedTeam || []).forEach((t) => {
+        if (t.assigned_camera) {
+          initialCameras[t.employee_id] = {
+            cameraName: t.assigned_camera,
+            equipmentId: t.assigned_equipment_id || '',
+          }
+        }
+      })
+      setSelectedStaffCameras(initialCameras)
       setSearchTerm('')
     }
   }, [isOpen, serviceId, assignedTeam])
@@ -100,10 +121,13 @@ export function AssignTeamModal({
       const emp = teamMembers.find((e) => e.id === id || e.employee_id === id)
       const empName = emp ? getMemberName(emp) : id
       const primaryRole = emp?.job_role || (emp?.job_roles && emp.job_roles[0]) || 'Team Member'
+      const camInfo = selectedStaffCameras[id]
       return {
         employee_id: id,
         employee_name: empName,
         role_title: primaryRole,
+        assigned_camera: camInfo?.cameraName || undefined,
+        assigned_equipment_id: camInfo?.equipmentId || undefined,
       }
     })
     onSave(team)
@@ -176,36 +200,73 @@ export function AssignTeamModal({
                   key={emp.id}
                   onClick={() => toggleSelect(emp.id)}
                   className={cn(
-                    'flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all',
+                    'p-3 rounded-xl border cursor-pointer transition-all text-xs space-y-2.5',
                     isSelected
                       ? 'bg-purple-50/80 border-[#5B3FD9] text-[#5B3FD9] ring-1 ring-[#5B3FD9]'
                       : 'bg-white border-gray-200 hover:border-gray-300 text-gray-800'
                   )}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="size-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center font-bold text-xs text-gray-700 shrink-0">
-                      {empName.slice(0, 2).toUpperCase()}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="size-9 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center font-bold text-xs text-gray-700 shrink-0">
+                        {empName.slice(0, 2).toUpperCase()}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-gray-900">
+                          {empName}
+                        </h4>
+                        <p className="text-[11px] text-gray-500 font-medium">
+                          {(emp.job_roles || [emp.job_role || 'Staff']).join(', ')} • {emp.department || 'Production'} •{' '}
+                          {isInHouse ? 'In-House' : 'Freelancer'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-gray-900">
-                        {empName}
-                      </h4>
-                      <p className="text-[11px] text-gray-500 font-medium">
-                        {(emp.job_roles || [emp.job_role || 'Staff']).join(', ')} • {emp.department || 'Production'} •{' '}
-                        {isInHouse ? 'In-House' : 'Freelancer'}
-                      </p>
+                    <div
+                      className={cn(
+                        'size-5 rounded-md flex items-center justify-center border transition-colors shrink-0',
+                        isSelected
+                          ? 'bg-[#5B3FD9] border-[#5B3FD9] text-white'
+                          : 'border-gray-300 bg-white'
+                      )}
+                    >
+                      {isSelected && <Check size={13} />}
                     </div>
                   </div>
-                  <div
-                    className={cn(
-                      'size-5 rounded-md flex items-center justify-center border transition-colors shrink-0',
-                      isSelected
-                        ? 'bg-[#5B3FD9] border-[#5B3FD9] text-white'
-                        : 'border-gray-300 bg-white'
-                    )}
-                  >
-                    {isSelected && <Check size={13} />}
-                  </div>
+
+                  {/* Camera / Gear assignment dropdown */}
+                  {isSelected && (
+                    <div
+                      className="pt-2 border-t border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-700">
+                        <Camera size={13} className="text-[#5B3FD9]" />
+                        <span>Assign Camera:</span>
+                      </div>
+                      <select
+                        value={selectedStaffCameras[emp.id]?.equipmentId || ''}
+                        onChange={(e) => {
+                          const eqId = e.target.value
+                          const foundEq = availableCameras.find((c) => c.id === eqId)
+                          setSelectedStaffCameras((prev) => ({
+                            ...prev,
+                            [emp.id]: {
+                              equipmentId: eqId,
+                              cameraName: foundEq ? `${foundEq.item_name} (${foundEq.serial_number})` : '',
+                            },
+                          }))
+                        }}
+                        className="h-7 text-[11px] font-medium rounded-lg bg-white border border-gray-300 text-gray-800 px-2 focus:outline-none focus:border-[#5B3FD9]"
+                      >
+                        <option value="">No Camera / Staff's Own Gear</option>
+                        {availableCameras.map((eq) => (
+                          <option key={eq.id} value={eq.id}>
+                            {eq.item_name} ({eq.serial_number}) {eq.assigned_to_employee_name ? `• ${eq.assigned_to_employee_name}` : '• Locker'}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               )
             })

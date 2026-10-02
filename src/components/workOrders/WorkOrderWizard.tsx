@@ -776,9 +776,14 @@ function StepEventsAndServices({ data, set }: { data: WorkOrderWizardData; set: 
                       <div className="flex flex-wrap items-center gap-1.5 pt-1">
                         <span className="text-[10px] text-gray-400 uppercase font-extrabold">Assigned:</span>
                         {srv.assigned_team.map((member) => (
-                          <span key={member.employee_id} className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-purple-100 text-[#5B3FD9] text-xs font-extrabold">
+                          <span key={member.employee_id} className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-100 text-[#5B3FD9] text-xs font-extrabold">
                             {member.employee_name}
                             {member.role_title && <span className="text-[10px] opacity-75">({member.role_title})</span>}
+                            {member.assigned_camera && (
+                              <span className="text-[10px] font-bold bg-white text-purple-800 px-1.5 py-0.5 rounded-md border border-purple-200">
+                                📷 {member.assigned_camera}
+                              </span>
+                            )}
                           </span>
                         ))}
                       </div>

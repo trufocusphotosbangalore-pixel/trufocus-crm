@@ -296,11 +296,19 @@ export function ScheduleTab({ workOrder, onEditSchedule }: ScheduleTabProps) {
                                         </span>
                                       </div>
 
-                                      {member.role_title && (
-                                        <span className="text-[10px] font-bold text-[#5B3FD9] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
-                                          {member.role_title}
-                                        </span>
-                                      )}
+                                      <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                        {member.assigned_camera && (
+                                          <span className="text-[10px] font-bold text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200 flex items-center gap-1">
+                                            <Camera size={10} className="text-[#5B3FD9]" />
+                                            {member.assigned_camera}
+                                          </span>
+                                        )}
+                                        {member.role_title && (
+                                          <span className="text-[10px] font-bold text-[#5B3FD9] bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                                            {member.role_title}
+                                          </span>
+                                        )}
+                                      </div>
                                     </div>
                                   ))}
                                 </div>

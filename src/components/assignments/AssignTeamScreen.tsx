@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Users, Calendar, Clock, MapPin, UserPlus, RefreshCw, Trash2, Eye,
-  ArrowLeft, Search, Check, AlertTriangle
+  ArrowLeft, Search, Check, AlertTriangle, Camera
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { toast } from 'react-hot-toast'
@@ -9,6 +9,7 @@ import type { WorkOrder, WorkOrderService } from '@/types/workOrders'
 import { AssignmentService } from '@/services/assignmentService'
 import { fetchAllEmployeesFromCloud } from '@/services/employeeService'
 import { getWorkRolesForEmployee } from '@/services/employeeWorkRolesService'
+import { getCamerasForAssignment, type EquipmentItem } from '@/services/equipmentService'
 import type { UserAccount } from '@/types/teamLogin'
 import { EmployeeProfileDrawer } from './EmployeeProfileDrawer'
 
@@ -47,11 +48,14 @@ export function AssignTeamScreen({
 
   // Selection state inside modal
   const [selectedStaffIds, setSelectedStaffIds] = useState<Set<string>>(new Set())
+  const [selectedStaffCameras, setSelectedStaffCameras] = useState<Record<string, { cameraName: string; equipmentId: string }>>({})
+  const [availableCameras, setAvailableCameras] = useState<EquipmentItem[]>([])
   const [staffSearch, setStaffSearch] = useState('')
 
   useEffect(() => {
     let isMounted = true
     setLoading(true)
+    setAvailableCameras(getCamerasForAssignment())
     fetchAllEmployeesFromCloud()
       .then((data) => {
         if (isMounted) {
@@ -62,8 +66,15 @@ export function AssignTeamScreen({
       .catch(() => {
         if (isMounted) setLoading(false)
       })
+
+    const handleGearSync = () => {
+      setAvailableCameras(getCamerasForAssignment())
+    }
+    window.addEventListener('trufocus_equipment_updated', handleGearSync)
+
     return () => {
       isMounted = false
+      window.removeEventListener('trufocus_equipment_updated', handleGearSync)
     }
   }, [])
 
@@ -75,6 +86,16 @@ export function AssignTeamScreen({
     setAssigningService({ eventId, service })
     const initial = new Set((service.assigned_team || []).map((m) => m.employee_id))
     setSelectedStaffIds(initial)
+    const initialCameras: Record<string, { cameraName: string; equipmentId: string }> = {}
+    ;(service.assigned_team || []).forEach((m) => {
+      if (m.assigned_camera) {
+        initialCameras[m.employee_id] = {
+          cameraName: m.assigned_camera,
+          equipmentId: m.assigned_equipment_id || '',
+        }
+      }
+    })
+    setSelectedStaffCameras(initialCameras)
     setStaffSearch('')
   }
 
@@ -87,10 +108,13 @@ export function AssignTeamScreen({
       const emp = employees.find((e) => e.id === id || e.employee_id === id)
       const empName = emp ? (emp.full_name || emp.employee_name || emp.username) : id
       const primaryRole = emp?.job_role || (emp?.job_roles && emp.job_roles[0]) || 'Crew Member'
+      const camInfo = selectedStaffCameras[id]
       return {
         employee_id: id,
         employee_name: empName,
         role_title: primaryRole,
+        assigned_camera: camInfo?.cameraName || undefined,
+        assigned_equipment_id: camInfo?.equipmentId || undefined,
       }
     })
 
@@ -378,6 +402,12 @@ export function AssignTeamScreen({
                                     <p className="text-[10px] text-gray-500 font-medium truncate">
                                       {member.role_title}
                                     </p>
+                                    {member.assigned_camera && (
+                                      <div className="flex items-center gap-1 mt-0.5 text-[10px] font-bold text-[#5B3FD9] bg-purple-50 px-1.5 py-0.5 rounded border border-purple-200/80 truncate">
+                                        <Camera size={10} className="shrink-0" />
+                                        <span className="truncate">{member.assigned_camera}</span>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
 
@@ -509,39 +539,76 @@ export function AssignTeamScreen({
                       key={emp.id}
                       onClick={toggle}
                       className={cn(
-                        'flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all text-xs',
+                        'p-3 rounded-xl border cursor-pointer transition-all text-xs space-y-2.5',
                         isSelected
-                          ? 'bg-purple-50 border-[#5B3FD9] text-[#5B3FD9] ring-1 ring-[#5B3FD9]'
+                          ? 'bg-purple-50/70 border-[#5B3FD9] text-[#5B3FD9] ring-1 ring-[#5B3FD9]'
                           : 'bg-white border-gray-200 hover:border-gray-300 text-gray-800'
                       )}
                     >
-                      <div className="flex items-center gap-3">
-                        <div className="size-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center font-bold text-gray-700">
-                          {empName.slice(0, 2).toUpperCase()}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="size-8 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center font-bold text-gray-700">
+                            {empName.slice(0, 2).toUpperCase()}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900">{empName}</h4>
+                            {workRoles.length > 0 ? (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {workRoles.map((wr) => (
+                                  <span key={wr.role_id} className="px-1.5 py-0.5 rounded bg-purple-50 text-[#5B3FD9] border border-purple-200 text-[10px] font-bold">
+                                    {wr.role_name}
+                                  </span>
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="text-[11px] text-gray-400 font-medium">No work roles assigned</p>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          <h4 className="font-bold text-gray-900">{empName}</h4>
-                          {workRoles.length > 0 ? (
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {workRoles.map((wr) => (
-                                <span key={wr.role_id} className="px-1.5 py-0.5 rounded bg-purple-50 text-[#5B3FD9] border border-purple-200 text-[10px] font-bold">
-                                  {wr.role_name}
-                                </span>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-[11px] text-gray-400 font-medium">No work roles assigned</p>
+                        <div
+                          className={cn(
+                            'size-5 rounded-md flex items-center justify-center border shrink-0',
+                            isSelected ? 'bg-[#5B3FD9] border-[#5B3FD9] text-white' : 'border-gray-300 bg-white'
                           )}
+                        >
+                          {isSelected && <Check size={12} />}
                         </div>
                       </div>
-                      <div
-                        className={cn(
-                          'size-5 rounded-md flex items-center justify-center border shrink-0',
-                          isSelected ? 'bg-[#5B3FD9] border-[#5B3FD9] text-white' : 'border-gray-300 bg-white'
-                        )}
-                      >
-                        {isSelected && <Check size={12} />}
-                      </div>
+
+                      {/* Camera / Gear Assignment Dropdown for Selected Staff */}
+                      {isSelected && (
+                        <div
+                          className="pt-2 border-t border-purple-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="flex items-center gap-1.5 text-[11px] font-bold text-gray-700">
+                            <Camera size={13} className="text-[#5B3FD9]" />
+                            <span>Assign Camera:</span>
+                          </div>
+                          <select
+                            value={selectedStaffCameras[emp.id]?.equipmentId || ''}
+                            onChange={(e) => {
+                              const eqId = e.target.value
+                              const foundEq = availableCameras.find((c) => c.id === eqId)
+                              setSelectedStaffCameras((prev) => ({
+                                ...prev,
+                                [emp.id]: {
+                                  equipmentId: eqId,
+                                  cameraName: foundEq ? `${foundEq.item_name} (${foundEq.serial_number})` : '',
+                                },
+                              }))
+                            }}
+                            className="h-7 text-[11px] font-medium rounded-lg bg-white border border-gray-300 text-gray-800 px-2 focus:outline-none focus:border-[#5B3FD9]"
+                          >
+                            <option value="">No Camera / Staff's Own Gear</option>
+                            {availableCameras.map((eq) => (
+                              <option key={eq.id} value={eq.id}>
+                                {eq.item_name} ({eq.serial_number}) {eq.assigned_to_employee_name ? `• ${eq.assigned_to_employee_name}` : '• Locker'}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                     </div>
                   )
                 })}

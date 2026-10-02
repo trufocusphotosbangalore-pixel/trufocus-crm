@@ -43,6 +43,9 @@ export function broadcastCloudSync(entity: string, payload?: any): void {
     if (entity === 'portal') {
       window.dispatchEvent(new CustomEvent('trufocus_portal_updated', { detail: payload }))
     }
+    if (entity === 'equipment') {
+      window.dispatchEvent(new CustomEvent('trufocus_equipment_updated', { detail: payload }))
+    }
   } catch (e) {
     console.error('Error broadcasting cloud sync event:', e)
   }
@@ -152,7 +155,7 @@ export function initRealtimeCloudListener(onSyncCallback: () => void): () => voi
   activeRealtimeCallbacks.add(onSyncCallback)
 
   if (unsubscribers.length === 0) {
-    const collectionsToListen = ['work_orders', 'enquiries', 'business_profile', 'finance_payments']
+    const collectionsToListen = ['work_orders', 'enquiries', 'business_profile', 'finance_payments', 'equipment']
     collectionsToListen.forEach((colName) => {
       try {
         const unsub = onSnapshot(collection(db, colName), (snapshot) => {
@@ -196,6 +199,48 @@ export function initRealtimeCloudListener(onSyncCallback: () => void): () => voi
               }
             } catch (err) {
               console.warn('[CloudSync] Realtime local hydration error on work_orders:', err)
+            }
+          }
+
+          if (colName === 'equipment') {
+            try {
+              const rawDocs: any[] = []
+              snapshot.forEach((d) => {
+                const dData = d.data()
+                rawDocs.push(dData.data !== undefined ? dData.data : dData)
+              })
+              const cloudItems = extractEntitiesFromCloudRows(rawDocs)
+              if (cloudItems.length > 0) {
+                const localStr = localStorage.getItem('trufocus_crm_equipment_items_v1')
+                let localItems: any[] = []
+                if (localStr) {
+                  try { localItems = JSON.parse(localStr) } catch (e) {}
+                }
+                const mergedMap = new Map<string, any>()
+                cloudItems.forEach((item: any) => {
+                  if (item && item.id) mergedMap.set(item.id, item)
+                })
+                if (Array.isArray(localItems)) {
+                  localItems.forEach((item: any) => {
+                    if (!item || !item.id) return
+                    const cItem = mergedMap.get(item.id)
+                    if (!cItem) {
+                      mergedMap.set(item.id, item)
+                    } else {
+                      const lTime = new Date(item.updated_at || item.created_at || 0).getTime()
+                      const cTime = new Date(cItem.updated_at || cItem.created_at || 0).getTime()
+                      if (lTime > cTime) {
+                        mergedMap.set(item.id, item)
+                      }
+                    }
+                  })
+                }
+                const mergedList = Array.from(mergedMap.values())
+                localStorage.setItem('trufocus_crm_equipment_items_v1', JSON.stringify(mergedList))
+                window.dispatchEvent(new CustomEvent('trufocus_equipment_updated', { detail: mergedList }))
+              }
+            } catch (err) {
+              console.warn('[CloudSync] Realtime local hydration error on equipment:', err)
             }
           }
 

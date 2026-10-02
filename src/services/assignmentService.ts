@@ -102,7 +102,13 @@ export const AssignmentService = {
     workOrderId: string
     eventId: string
     serviceId: string
-    assignedMembers: { employee_id: string; employee_name: string; role_title: string }[]
+    assignedMembers: {
+      employee_id: string
+      employee_name: string
+      role_title: string
+      assigned_camera?: string
+      assigned_equipment_id?: string
+    }[]
     assignedBy?: string
   }): Promise<{ success: boolean; message: string }> {
     const { workOrderId, eventId, serviceId, assignedMembers, assignedBy = 'Manager' } = params
@@ -131,6 +137,8 @@ export const AssignmentService = {
       employee_id: m.employee_id,
       employee_name: m.employee_name,
       role_title: m.role_title,
+      assigned_camera: m.assigned_camera,
+      assigned_equipment_id: m.assigned_equipment_id,
     }))
     service.assigned_team = updatedTeam
     wo.updated_at = new Date().toISOString()
@@ -168,6 +176,8 @@ export const AssignmentService = {
         assigned_by: assignedBy,
         assigned_at: now,
         status: 'assigned',
+        assigned_camera: m.assigned_camera,
+        assigned_equipment_id: m.assigned_equipment_id,
         created_at: now,
         updated_at: now,
       }
@@ -185,7 +195,7 @@ export const AssignmentService = {
     assignedMembers.forEach((member) => {
       addNotification({
         title: 'New Service Assignment',
-        message: `You have been assigned to ${service.service_name} for Work Order ${wo.work_order_number}`,
+        message: `You have been assigned to ${service.service_name} for Work Order ${wo.work_order_number}${member.assigned_camera ? ` (Camera: ${member.assigned_camera})` : ''}`,
         type: 'assignment',
         target_role: member.role_title.toLowerCase(),
         work_order_number: wo.work_order_number,
@@ -206,7 +216,13 @@ export const AssignmentService = {
     eventId: string
     serviceId: string
     oldEmployeeId: string
-    newMember: { employee_id: string; employee_name: string; role_title: string }
+    newMember: {
+      employee_id: string
+      employee_name: string
+      role_title: string
+      assigned_camera?: string
+      assigned_equipment_id?: string
+    }
     assignedBy?: string
   }): Promise<{ success: boolean; message: string }> {
     const { workOrderId, eventId, serviceId, oldEmployeeId, newMember, assignedBy = 'Manager' } = params
@@ -230,6 +246,8 @@ export const AssignmentService = {
       employee_id: newMember.employee_id,
       employee_name: newMember.employee_name,
       role_title: newMember.role_title,
+      assigned_camera: newMember.assigned_camera,
+      assigned_equipment_id: newMember.assigned_equipment_id,
     })
 
     return this.assignTeamToService({
@@ -240,6 +258,8 @@ export const AssignmentService = {
         employee_id: m.employee_id,
         employee_name: m.employee_name,
         role_title: m.role_title || 'Staff',
+        assigned_camera: m.assigned_camera,
+        assigned_equipment_id: m.assigned_equipment_id,
       })),
       assignedBy,
     })

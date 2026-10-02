@@ -93,6 +93,8 @@ export interface WorkOrderTeamAssignment {
   employee_id: string
   employee_name: string
   role_title?: string
+  assigned_camera?: string
+  assigned_equipment_id?: string
   notes?: string
 }
 
@@ -264,6 +266,8 @@ export interface WizardTeamAssignment {
   employee_id: string
   employee_name: string
   role_title?: string
+  assigned_camera?: string
+  assigned_equipment_id?: string
 }
 
 export interface WizardServiceForm {
@@ -407,6 +411,8 @@ export function workOrderToWizardData(wo: WorkOrder): WorkOrderWizardData {
           employee_id: t.employee_id,
           employee_name: t.employee_name,
           role_title: t.role_title,
+          assigned_camera: t.assigned_camera,
+          assigned_equipment_id: t.assigned_equipment_id,
         })),
       })),
     })),
@@ -489,6 +495,8 @@ export function wizardDataToWorkOrderUpdates(data: WorkOrderWizardData, existing
           employee_id: t.employee_id,
           employee_name: t.employee_name,
           role_title: t.role_title || '',
+          assigned_camera: t.assigned_camera,
+          assigned_equipment_id: t.assigned_equipment_id,
         })),
       })),
     })),

@@ -48,6 +48,8 @@ export interface AssignmentRecord {
   submitted_at?: string
   approved_at?: string
   status: CanonicalAssignmentStatus
+  assigned_camera?: string
+  assigned_equipment_id?: string
   completion_notes?: string
   rejection_reason?: string
   memory_card_status?: 'pending' | 'submitted' | 'na'
@@ -245,6 +247,8 @@ function deriveAssignmentsFromWorkOrders(): AssignmentRecord[] {
             assigned_by: 'Manager',
             assigned_at: wo.created_at,
             status: 'assigned',
+            assigned_camera: member.assigned_camera,
+            assigned_equipment_id: member.assigned_equipment_id,
             created_at: now,
             updated_at: now,
           })

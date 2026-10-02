@@ -160,6 +160,14 @@ export default function CrewMyShootsPage() {
               <span className="font-bold text-gray-500 block">Event Date & Time</span>
               <span className="font-extrabold text-gray-900 text-sm">{activeShoot.event_date} {activeShoot.event_time ? `(${activeShoot.event_time})` : ''}</span>
             </div>
+            {activeShoot.assigned_camera && (
+              <div className="col-span-1 md:col-span-2 lg:col-span-4 p-2.5 rounded-lg bg-purple-50 border border-purple-200 flex items-center gap-2 text-xs">
+                <Camera size={15} className="text-[#5B3FD9] shrink-0" />
+                <span className="text-gray-700">
+                  Assigned Camera / Gear Kit: <strong className="text-[#5B3FD9]">{activeShoot.assigned_camera}</strong>
+                </span>
+              </div>
+            )}
           </div>
         ) : (
           <div className="p-8 text-center text-xs text-gray-500">No active assignment details to display.</div>

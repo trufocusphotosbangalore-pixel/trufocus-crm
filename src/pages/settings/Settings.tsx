@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import {
   Settings as SettingsIcon, Calendar, Layers, Package,
-  CreditCard, FileText, Building2, Users, Plus, Trash2, ShieldCheck, Briefcase, Cpu, Tag, Film as FilmIcon,
+  CreditCard, FileText, Building2, Users, Plus, Trash2, ShieldCheck, Briefcase, Cpu, Tag, Film as FilmIcon, Camera,
 } from 'lucide-react'
 import { ServiceCatalogTab } from '@/components/settings/ServiceCatalogTab'
 import { BusinessProfileTab } from '@/components/settings/BusinessProfileTab'
+import { EquipmentManagementTab } from '@/components/settings/EquipmentManagementTab'
 import { cn } from '@/utils/cn'
 import {
   loadSettingsFromStorage,
@@ -35,6 +36,7 @@ type TabType =
   | 'business_profile'
   | 'job_roles'
   | 'team_access'
+  | 'equipment_management'
   | 'service_catalog'
   | 'deleted_work_orders'
   | 'deleted_enquiries'
@@ -103,6 +105,7 @@ export default function SettingsPage() {
     { id: 'business_profile', label: 'Business Profile & Branding', icon: Building2 },
     { id: 'job_roles', label: 'Job Roles Master', icon: Briefcase },
     { id: 'team_access', label: 'Team Access & Permissions', icon: ShieldCheck },
+    { id: 'equipment_management', label: 'Equipment & Gear Management', icon: Camera },
     { id: 'service_catalog', label: 'Service Catalog', icon: Tag },
     { id: 'ai_developer', label: 'AI & Developer Settings', icon: Cpu },
     { id: 'deleted_work_orders', label: 'Deleted Work Orders / Trash', icon: Trash2 },
@@ -171,6 +174,9 @@ export default function SettingsPage() {
 
         {/* 0. TEAM ACCESS & PERMISSIONS */}
         {activeTab === 'team_access' && <TeamAccessTab />}
+
+        {/* 0.04 EQUIPMENT & GEAR MANAGEMENT */}
+        {activeTab === 'equipment_management' && <EquipmentManagementTab />}
 
         {/* 0.05 SERVICE CATALOG MASTER */}
         {activeTab === 'service_catalog' && <ServiceCatalogTab />}
