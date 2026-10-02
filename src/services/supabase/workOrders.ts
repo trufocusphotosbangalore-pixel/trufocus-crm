@@ -235,15 +235,12 @@ export async function fetchWorkOrders(
 
               const lDeleted = Boolean(lItem.deleted_at || lItem.status === 'deleted')
               const cDeleted = Boolean(cItem.deleted_at || cItem.status === 'deleted')
+              const lArchived = Boolean(lItem.is_archived || lItem.status === 'archived')
+              const cArchived = Boolean(cItem.is_archived || cItem.status === 'archived')
 
-              if (lDeleted && !cDeleted) {
-                const lDelTime = new Date(lItem.deleted_at || lItem.updated_at || 0).getTime()
-                if (lDelTime >= cTime) {
-                  mergedMap.set(key, lItem)
-                  localHadChanges = true
-                } else {
-                  mergedMap.set(key, cItem)
-                }
+              if ((lArchived && !cArchived) || (lDeleted && !cDeleted)) {
+                mergedMap.set(key, lItem)
+                localHadChanges = true
               } else if (cDeleted && !lDeleted) {
                 const cDelTime = new Date(cItem.deleted_at || cItem.updated_at || 0).getTime()
                 if (cDelTime >= lTime) {
@@ -284,7 +281,7 @@ export function fetchWorkOrdersLocal(
   page: number,
   pageSize: number
 ): PaginatedResult<WorkOrder> {
-  let list = getLocalWorkOrders().filter(w => !w.is_draft && !w.deleted_at && w.status !== 'deleted')
+  let list = getLocalWorkOrders().filter(w => !w.is_draft && !w.deleted_at && w.status !== 'deleted' && !w.is_archived && w.status !== 'archived')
 
   list = filterWorkOrdersList(list, filters.status, filters.search)
 
@@ -1001,6 +998,121 @@ export function purgeWorkOrderDataFromEverywhere(id: string, workOrderNumber: st
       console.warn(`Error purging key ${key}:`, e)
     }
   })
+}
+
+export function archiveWorkOrder(
+  id: string,
+  archivedBy = 'Admin',
+  reason = ''
+): { success: boolean; message: string } {
+  const existingList = getLocalWorkOrders()
+  const woIndex = existingList.findIndex(
+    (w) => w.id === id || w.work_order_number === id
+  )
+
+  if (woIndex === -1) {
+    return { success: false, message: 'Work Order not found.' }
+  }
+
+  const wo = existingList[woIndex]
+  const now = new Date().toISOString()
+
+  wo.is_archived = true
+  wo.status = 'archived'
+  wo.archived_at = now
+  wo.archived_by = archivedBy
+  wo.archive_reason = reason
+  wo.updated_at = now
+
+  if (!wo.activity_logs) wo.activity_logs = []
+  wo.activity_logs.unshift({
+    id: 'act_' + Date.now(),
+    action: 'Work Order Archived',
+    user: archivedBy,
+    date: now,
+    details: `Work Order moved to Archive by ${archivedBy}. Reason: ${reason || 'N/A'}.`,
+  })
+
+  existingList[woIndex] = wo
+
+  try {
+    saveLocalWorkOrders(existingList)
+    broadcastPaymentSync({ workOrderId: wo.id, action: 'WORK_ORDER_ARCHIVED' })
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('workOrdersUpdated'))
+    }
+    logLoginAudit(
+      'Work Order Archived',
+      archivedBy,
+      wo.work_order_number,
+      `Archived Work Order ${wo.work_order_number} (${wo.project_name}). Reason: ${reason || 'N/A'}`
+    )
+  } catch (e) {
+    console.error('Error archiving work order:', e)
+  }
+
+  return { success: true, message: `📁 Work Order ${wo.work_order_number} has been archived.` }
+}
+
+export function unarchiveWorkOrder(
+  id: string,
+  restoredBy = 'Admin'
+): { success: boolean; message: string } {
+  const existingList = getLocalWorkOrders()
+  const woIndex = existingList.findIndex(
+    (w) => w.id === id || w.work_order_number === id
+  )
+
+  if (woIndex === -1) {
+    return { success: false, message: 'Work Order not found.' }
+  }
+
+  const wo = existingList[woIndex]
+  const now = new Date().toISOString()
+
+  wo.is_archived = false
+  wo.archived_at = null
+  wo.archived_by = null
+  wo.archive_reason = null
+  wo.updated_at = now
+
+  // Recompute active lifecycle status
+  wo.status = 'upcoming'
+
+  if (!wo.activity_logs) wo.activity_logs = []
+  wo.activity_logs.unshift({
+    id: 'act_' + Date.now(),
+    action: 'Work Order Restored from Archive',
+    user: restoredBy,
+    date: now,
+    details: `Work Order restored from archive to active work orders by ${restoredBy}.`,
+  })
+
+  existingList[woIndex] = wo
+
+  try {
+    saveLocalWorkOrders(existingList)
+    broadcastPaymentSync({ workOrderId: wo.id, action: 'WORK_ORDER_UNARCHIVED' })
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('workOrdersUpdated'))
+    }
+    logLoginAudit(
+      'Work Order Restored',
+      restoredBy,
+      wo.work_order_number,
+      `Restored Work Order ${wo.work_order_number} (${wo.project_name}) from Archive.`
+    )
+  } catch (e) {
+    console.error('Error unarchiving work order:', e)
+  }
+
+  return { success: true, message: `✅ Work Order ${wo.work_order_number} has been restored to active list.` }
+}
+
+export function getArchivedWorkOrders(): WorkOrder[] {
+  return getLocalWorkOrders().filter(
+    (w) => !w.deleted_at && w.status !== 'deleted' && (w.is_archived === true || w.status === 'archived')
+  )
 }
 
 export function softDeleteWorkOrder(

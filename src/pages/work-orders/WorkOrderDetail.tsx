@@ -4,7 +4,7 @@ import {
   ArrowLeft, Pencil, ExternalLink, Share2, Printer, Download,
   ClipboardList, CalendarDays, FileCheck, PackageCheck, CreditCard,
   BookImage, Clock, Activity, Sparkles, FileText, MessageSquare, Image,
-  Trash2, AlertTriangle, X,
+  Archive, RotateCcw, AlertTriangle, X,
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import * as woService from '@/services/supabase/workOrders'
@@ -14,9 +14,7 @@ import { WorkOrderWizard } from '@/components/workOrders/WorkOrderWizard'
 import { SharePortalModal } from '@/components/workOrders/SharePortalModal'
 import { WorkOrderRightPanel } from '@/components/workOrders/details/WorkOrderRightPanel'
 import { getOrCreatePortalForWorkOrder } from '@/services/customerPortalStore'
-import { canUserPerformDelete } from '@/services/permissionService'
-import { softDeleteWorkOrder } from '@/services/supabase/workOrders'
-import { PermissionDeniedModal } from '@/components/common/PermissionDeniedModal'
+import { archiveWorkOrder, unarchiveWorkOrder } from '@/services/supabase/workOrders'
 import {
   getWorkOrderNextShoot,
   getWorkOrderComputedStatus,
@@ -101,10 +99,39 @@ export function WorkOrderDetail() {
   const [activeTab, setActiveTab] = useState<DetailTabId>('overview')
   const [isEditingWizard, setIsEditingWizard] = useState(false)
   const [shareWorkOrder, setShareWorkOrder] = useState<WorkOrder | null>(null)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [showPermissionDeniedModal, setShowPermissionDeniedModal] = useState(false)
-  const [deleteReason, setDeleteReason] = useState('')
-  const [isDeleting, setIsDeleting] = useState(false)
+  const [showArchiveModal, setShowArchiveModal] = useState(false)
+  const [archiveReason, setArchiveReason] = useState('')
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const isArchived = Boolean(currentWorkOrder?.is_archived || currentWorkOrder?.status === 'archived')
+
+  const handleArchive = async () => {
+    if (!currentWorkOrder) return
+    setIsProcessing(true)
+    const res = archiveWorkOrder(currentWorkOrder.id, 'Admin', archiveReason.trim())
+    if (res.success) {
+      toast.success(res.message)
+      setShowArchiveModal(false)
+      setArchiveReason('')
+      navigate('/work-orders')
+    } else {
+      toast.error(res.message)
+    }
+    setIsProcessing(false)
+  }
+
+  const handleRestore = async () => {
+    if (!currentWorkOrder) return
+    setIsProcessing(true)
+    const res = unarchiveWorkOrder(currentWorkOrder.id, 'Admin')
+    if (res.success) {
+      toast.success(res.message)
+      loadWorkOrder(false)
+    } else {
+      toast.error(res.message)
+    }
+    setIsProcessing(false)
+  }
 
   const loadWorkOrder = useCallback(
     async (isSilent = false) => {
@@ -249,21 +276,50 @@ export function WorkOrderDetail() {
               <Download size={16} />
             </button>
 
-            <button
-              onClick={() => {
-                if (!canUserPerformDelete('work_orders')) {
-                  setShowPermissionDeniedModal(true)
-                  return
-                }
-                setShowDeleteModal(true)
-              }}
-              className="min-h-[44px] px-3.5 py-2 text-xs font-extrabold rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 flex items-center gap-1.5 cursor-pointer transition-colors"
-              title="Delete Work Order"
-            >
-              <Trash2 size={14} /> <span className="hidden sm:inline">Delete Work Order</span><span className="sm:hidden">Delete</span>
-            </button>
+            {isArchived ? (
+              <button
+                onClick={handleRestore}
+                disabled={isProcessing}
+                className="min-h-[44px] px-3.5 py-2 text-xs font-extrabold rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 flex items-center gap-1.5 cursor-pointer transition-colors"
+                title="Restore to Active Work Orders"
+              >
+                <RotateCcw size={14} /> <span className="hidden sm:inline">Restore to Active</span><span className="sm:hidden">Restore</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowArchiveModal(true)}
+                disabled={isProcessing}
+                className="min-h-[44px] px-3.5 py-2 text-xs font-extrabold rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-[#5B3FD9] flex items-center gap-1.5 cursor-pointer transition-colors"
+                title="Archive Work Order"
+              >
+                <Archive size={14} /> <span className="hidden sm:inline">Archive Work Order</span><span className="sm:hidden">Archive</span>
+              </button>
+            )}
           </div>
         </div>
+
+        {/* ── Archived Notice Banner ── */}
+        {isArchived && (
+          <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-900 font-semibold shadow-xs">
+            <div className="flex items-center gap-2.5">
+              <Archive size={18} className="text-amber-700 shrink-0" />
+              <div>
+                <p className="font-extrabold text-amber-950">This Work Order is Archived</p>
+                <p className="text-[11px] text-amber-800 font-normal">
+                  It is currently hidden from active work orders. All customer data and financials remain intact.
+                  {currentWorkOrder.archive_reason && ` (Reason: ${currentWorkOrder.archive_reason})`}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleRestore}
+              disabled={isProcessing}
+              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-extrabold transition-colors cursor-pointer flex items-center gap-1.5 shrink-0 self-start sm:self-auto"
+            >
+              <RotateCcw size={13} /> {isProcessing ? 'Restoring...' : 'Restore to Active'}
+            </button>
+          </div>
+        )}
 
         {/* ── NEXT SHOOT Header Card ── */}
         {nextShoot && nextShootBadge && (
@@ -424,88 +480,81 @@ export function WorkOrderDetail() {
         />
       )}
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && (
+      {/* Archive Confirmation Modal */}
+      {showArchiveModal && currentWorkOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-150 font-sans">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-2xl max-w-md w-full p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-              <div className="flex items-center gap-2 text-red-600">
-                <AlertTriangle size={20} />
-                <h3 className="text-base font-extrabold text-[#111827]">Delete Work Order?</h3>
+              <div className="flex items-center gap-2 text-[#5B3FD9]">
+                <Archive size={20} />
+                <h3 className="text-base font-extrabold text-[#111827]">Archive Work Order?</h3>
               </div>
-              <button onClick={() => setShowDeleteModal(false)} className="text-gray-400 hover:text-gray-600 cursor-pointer">
+              <button
+                onClick={() => setShowArchiveModal(false)}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
                 <X size={16} />
               </button>
             </div>
 
             <div className="space-y-3 text-xs text-gray-600">
-              <p className="font-semibold text-gray-800">You are about to delete this Work Order.</p>
+              <p className="font-semibold text-gray-800">
+                You are about to archive this Work Order.
+              </p>
 
-              <div className="p-3.5 rounded-xl bg-red-50/60 border border-red-200 space-y-1 font-sans">
+              <div className="p-3.5 rounded-xl bg-purple-50/60 border border-purple-200 space-y-1 font-sans">
                 <p>
                   Project: <strong className="text-gray-900">{currentWorkOrder.project_name}</strong>
                 </p>
                 <p>
-                  Work Order: <strong className="font-mono text-red-700">{currentWorkOrder.work_order_number}</strong>
+                  Work Order: <strong className="font-mono text-[#5B3FD9]">{currentWorkOrder.work_order_number}</strong>
+                </p>
+                <p>
+                  Customer: <strong className="text-gray-900">{currentWorkOrder.customer_name}</strong>
                 </p>
               </div>
 
               <p className="text-gray-500">
-                This action will remove the project and all related records (events, deliverables, payments, receipts, contract).
+                Archiving will hide this work order from the active work orders list. All project records, schedules, deliverables, and payment receipts are preserved safely.
               </p>
 
               <div className="pt-1">
-                <label className="block text-xs font-bold text-gray-700 mb-1">Reason for Deletion (Optional)</label>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Reason for Archiving (Optional)
+                </label>
                 <input
                   type="text"
-                  placeholder="e.g. Client requested cancellation / Duplicate entry"
-                  value={deleteReason}
-                  onChange={(e) => setDeleteReason(e.target.value)}
-                  className="w-full h-9 px-3 text-xs rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:border-red-500 font-sans"
+                  placeholder="e.g. Completed & closed / Inactive / Client requested hold"
+                  value={archiveReason}
+                  onChange={(e) => setArchiveReason(e.target.value)}
+                  className="w-full h-9 px-3 text-xs rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:border-[#5B3FD9] font-sans"
                 />
               </div>
 
-              <span className="text-[11px] font-bold text-red-600 block">
-                ⚠️ Soft delete mode enabled. This Work Order can be restored anytime by an Admin from Settings → Deleted Work Orders.
+              <span className="text-[11px] font-semibold text-[#5B3FD9] block bg-purple-50 p-2.5 rounded-lg border border-purple-100">
+                📁 You can access, view, or restore this order anytime from the <strong>Archived</strong> tab on the Work Orders page.
               </span>
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-3 border-t border-gray-100">
               <button
-                disabled={isDeleting}
-                onClick={() => setShowDeleteModal(false)}
+                disabled={isProcessing}
+                onClick={() => setShowArchiveModal(false)}
                 className="px-4 py-2 text-xs font-bold rounded-xl border border-gray-200 bg-white hover:bg-gray-100 text-gray-700 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <button
-                disabled={isDeleting}
-                onClick={() => {
-                  setIsDeleting(true)
-                  const res = softDeleteWorkOrder(currentWorkOrder.id, 'Admin', deleteReason.trim())
-                  if (res.success) {
-                    toast.success(res.message)
-                    navigate('/projects')
-                  } else {
-                    toast.error(res.message)
-                  }
-                  setIsDeleting(false)
-                  setShowDeleteModal(false)
-                }}
-                className="px-4 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
+                disabled={isProcessing}
+                onClick={handleArchive}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-[#5B3FD9] hover:bg-[#4C34C3] text-white shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
               >
-                <Trash2 size={13} /> {isDeleting ? 'Deleting...' : 'Delete Work Order'}
+                <Archive size={13} /> {isProcessing ? 'Archiving...' : 'Archive Work Order'}
               </button>
             </div>
           </div>
         </div>
       )}
-      {/* Permission Denied Modal */}
-      <PermissionDeniedModal
-        isOpen={showPermissionDeniedModal}
-        onClose={() => setShowPermissionDeniedModal(false)}
-        recordType="Work Order"
-      />
     </div>
   )
 }

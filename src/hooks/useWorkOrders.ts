@@ -28,6 +28,8 @@ interface UseWorkOrdersReturn {
   createWorkOrder: (data: WorkOrderWizardData, userId: string, isDraft?: boolean) => Promise<{ data?: WorkOrder | null; error: string | null }>
   updateWorkOrder: (id: string, updates: Partial<WorkOrder>) => Promise<{ error: string | null }>
   deleteWorkOrder: (id: string) => Promise<{ error: string | null }>
+  archiveWorkOrder: (id: string, reason?: string) => Promise<{ success: boolean; message: string }>
+  unarchiveWorkOrder: (id: string) => Promise<{ success: boolean; message: string }>
   recordPayment: (params: woService.RecordPaymentParams) => Promise<ApiResponse<woService.RecordPaymentResult>>
 }
 
@@ -91,6 +93,18 @@ export function useWorkOrders(): UseWorkOrdersReturn {
     return { error: r.error }
   }, [refresh])
 
+  const archiveWorkOrder = useCallback(async (id: string, reason = '') => {
+    const res = woService.archiveWorkOrder(id, 'Admin', reason)
+    refresh()
+    return res
+  }, [refresh])
+
+  const unarchiveWorkOrder = useCallback(async (id: string) => {
+    const res = woService.unarchiveWorkOrder(id, 'Admin')
+    refresh()
+    return res
+  }, [refresh])
+
   const recordPayment = useCallback(async (params: woService.RecordPaymentParams) => {
     const r = await woService.recordWorkOrderPayment(params)
     if (!r.error) refresh()
@@ -100,6 +114,6 @@ export function useWorkOrders(): UseWorkOrdersReturn {
   return {
     result, isLoading, filters, sort, page, pageSize,
     setFilters, resetFilters, setSort, setPage, setPageSize, refresh,
-    createWorkOrder, updateWorkOrder, deleteWorkOrder, recordPayment,
+    createWorkOrder, updateWorkOrder, deleteWorkOrder, archiveWorkOrder, unarchiveWorkOrder, recordPayment,
   }
 }

@@ -183,13 +183,31 @@ export async function initCloudDatabaseSync(): Promise<void> {
         if (k) mergedMap.set(k, w)
       })
 
-      let hasNewLocal = false
+      let hasLocalChanges = false
       if (Array.isArray(localWOs)) {
         localWOs.forEach((w: any) => {
           const key = w.id || w.work_order_number
-          if (key && !mergedMap.has(key)) {
+          if (!key) return
+          if (!mergedMap.has(key)) {
             mergedMap.set(key, w)
-            hasNewLocal = true
+            hasLocalChanges = true
+          } else {
+            const cloudItem = mergedMap.get(key)
+            const lTime = new Date(w.updated_at || w.archived_at || w.deleted_at || w.created_at || 0).getTime()
+            const cTime = new Date(cloudItem.updated_at || cloudItem.archived_at || cloudItem.deleted_at || cloudItem.created_at || 0).getTime()
+
+            const lArchived = Boolean(w.is_archived || w.status === 'archived')
+            const cArchived = Boolean(cloudItem.is_archived || cloudItem.status === 'archived')
+            const lDeleted = Boolean(w.deleted_at || w.status === 'deleted')
+            const cDeleted = Boolean(cloudItem.deleted_at || cloudItem.status === 'deleted')
+
+            if ((lArchived && !cArchived) || (lDeleted && !cDeleted)) {
+              mergedMap.set(key, w)
+              hasLocalChanges = true
+            } else if (lTime > cTime) {
+              mergedMap.set(key, w)
+              hasLocalChanges = true
+            }
           }
         })
       }
@@ -198,7 +216,7 @@ export async function initCloudDatabaseSync(): Promise<void> {
       localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify(mergedList))
       broadcastCloudSync('work_orders', mergedList)
 
-      if (hasNewLocal || cloudWOs.length !== extractedCloud.length) {
+      if (hasLocalChanges || cloudWOs.length !== extractedCloud.length) {
         await pushEntityToCloud('work_orders', 'main', mergedList)
       }
     } else if (Array.isArray(localWOs) && localWOs.length > 0) {

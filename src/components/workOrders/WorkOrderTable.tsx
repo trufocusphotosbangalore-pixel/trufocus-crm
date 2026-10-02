@@ -97,14 +97,17 @@ export interface WorkOrderTableProps {
   onSort: (s: SortConfig) => void
   onPage: (p: number) => void; onPageSize: (s: number) => void
   onView: (w: WorkOrder) => void; onEdit: (w: WorkOrder) => void
-  onDelete: (id: string) => void; onNew: () => void
+  onDelete?: (id: string) => void
+  onArchive?: (id: string) => void
+  onRestore?: (id: string) => void
+  onNew: () => void
   onSharePortal?: (w: WorkOrder) => void
 }
 
 export function WorkOrderTable({
   workOrders, isLoading, sort, page, pageSize, total, totalPages, hasFilters,
   showColumnDrawer, onCloseColumnDrawer,
-  onSort, onPage, onPageSize, onView, onEdit, onDelete, onNew, onSharePortal,
+  onSort, onPage, onPageSize, onView, onEdit, onDelete, onArchive, onRestore, onNew, onSharePortal,
 }: WorkOrderTableProps) {
   const {
     layout,
@@ -200,7 +203,17 @@ export function WorkOrderTable({
       case 'contract_status':
         return <ContractStatusBadge status={wo.contract_status} />
       case 'actions':
-        return <WorkOrderRowActions wo={wo} onView={onView} onEdit={onEdit} onDelete={onDelete} onSharePortal={onSharePortal} />
+        return (
+          <WorkOrderRowActions
+            wo={wo}
+            onView={onView}
+            onEdit={onEdit}
+            onArchive={onArchive}
+            onRestore={onRestore}
+            onDelete={onDelete}
+            onSharePortal={onSharePortal}
+          />
+        )
       default:
         return null
     }
@@ -254,7 +267,15 @@ export function WorkOrderTable({
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
-              <WorkOrderRowActions wo={wo} onView={onView} onEdit={onEdit} onDelete={onDelete} onSharePortal={onSharePortal} />
+              <WorkOrderRowActions
+                wo={wo}
+                onView={onView}
+                onEdit={onEdit}
+                onArchive={onArchive}
+                onRestore={onRestore}
+                onDelete={onDelete}
+                onSharePortal={onSharePortal}
+              />
             </div>
           </div>
         ))}

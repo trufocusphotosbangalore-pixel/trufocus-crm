@@ -12,6 +12,7 @@ export type ComputedScheduleStatus =
   | 'overdue'
   | 'cancelled'
   | 'deleted'
+  | 'archived'
 
 export interface NextShootDetails {
   event_id: string
@@ -111,6 +112,7 @@ export function computeEventScheduleStatus(
 export function calculateWorkOrderStatus(
   wo: WorkOrder
 ): ComputedScheduleStatus {
+  if (wo.status === 'archived' || wo.is_archived) return 'archived'
   if (wo.status === 'cancelled' || (wo as any).cancelled_at) return 'cancelled'
   if (wo.status === 'deleted' || wo.deleted_at) return 'deleted'
 
@@ -121,7 +123,7 @@ export function calculateWorkOrderStatus(
  * Calculate live counts for all status categories across all Work Orders
  */
 export function calculateDashboardCounts(workOrders: WorkOrder[]): DashboardStatusCounts {
-  const activeWOs = workOrders.filter((w) => !w.deleted_at && w.status !== 'deleted')
+  const activeWOs = workOrders.filter((w) => !w.deleted_at && w.status !== 'deleted' && !w.is_archived && w.status !== 'archived')
 
   const counts: DashboardStatusCounts = {
     all: activeWOs.length,
@@ -157,7 +159,7 @@ export function filterWorkOrdersList(
   const query = searchQuery.trim().toLowerCase()
 
   return workOrders.filter((w) => {
-    if (w.deleted_at || w.status === 'deleted') return false
+    if (w.deleted_at || w.status === 'deleted' || w.is_archived || w.status === 'archived') return false
 
     // Search query filter
     if (query) {

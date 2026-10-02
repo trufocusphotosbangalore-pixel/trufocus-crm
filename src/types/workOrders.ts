@@ -7,7 +7,7 @@ export type { EventType, EnquirySource }
 
 export type WorkOrderStatus =
   | 'upcoming' | 'todays_shoot' | 'ongoing' | 'in_progress' | 'editing'
-  | 'album_design' | 'ready_for_delivery' | 'completed' | 'delivered' | 'cancelled' | 'deleted'
+  | 'album_design' | 'ready_for_delivery' | 'completed' | 'delivered' | 'cancelled' | 'deleted' | 'archived'
 
 export type PaymentStatus =
   | 'pending' | 'advance_received' | 'partially_paid' | 'fully_paid' | 'refunded'
@@ -30,6 +30,7 @@ export const WO_STATUS_LABELS: Record<WorkOrderStatus, string> = {
   delivered:          'Delivered',
   cancelled:          'Cancelled',
   deleted:            'Deleted (Trash)',
+  archived:           'Archived',
 }
 
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
@@ -66,6 +67,7 @@ export const WO_STATUS_COLORS: Record<WorkOrderStatus, { bg: string; text: strin
   delivered:          { bg: 'bg-emerald-100 border border-emerald-300', text: 'text-emerald-900',  dot: 'bg-emerald-600' },
   cancelled:          { bg: 'bg-rose-50 border border-rose-200',      text: 'text-rose-700',      dot: 'bg-rose-500' },
   deleted:            { bg: 'bg-gray-100 border border-gray-200',    text: 'text-gray-500',      dot: 'bg-gray-400' },
+  archived:           { bg: 'bg-slate-100 border border-slate-300',  text: 'text-slate-700',     dot: 'bg-slate-500' },
 }
 
 export const PAYMENT_STATUS_COLORS: Record<PaymentStatus, { bg: string; text: string }> = {
@@ -234,6 +236,12 @@ export interface WorkOrder extends BaseEntity {
   final_delivery_date: string | null
   album_delivery_date: string | null
   is_draft: boolean
+
+  // Archive Control Flags
+  is_archived?: boolean
+  archived_at?: string | null
+  archived_by?: string | null
+  archive_reason?: string | null
 
   // Production Completion Control Flag
   production_completed?: boolean
