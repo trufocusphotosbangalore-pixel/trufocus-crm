@@ -3,6 +3,7 @@ import { pushEntityToCloud } from '@/services/cloudSyncService'
 import { canUserPerformDelete } from '@/services/permissionService'
 import { logAIPermissionAudit } from '@/services/aiPermissionService'
 import { getLocalWorkOrders, saveLocalWorkOrders } from '@/services/supabase/workOrders'
+import { filterOutLegacyDemoItems } from '@/utils/legacyDemoPurge'
 import type {
   PaymentRecord,
   TeamPayout,
@@ -40,6 +41,16 @@ export function getPayments(): PaymentRecord[] {
   } catch (e) {
     console.error(e)
     list = DEFAULT_PAYMENTS
+  }
+
+  const rawLen = list.length
+  list = filterOutLegacyDemoItems(list)
+  if (list.length !== rawLen) {
+    try {
+      localStorage.setItem(PAYMENTS_KEY, JSON.stringify(list))
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const activeWOs = getLocalWorkOrders().filter((w) => !w.deleted_at && w.status !== 'deleted')
@@ -131,8 +142,9 @@ export function getPayments(): PaymentRecord[] {
 
 export function savePayments(payments: PaymentRecord[]): void {
   try {
-    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments))
-    pushEntityToCloud('finance_payments', 'main', payments)
+    const cleanPayments = filterOutLegacyDemoItems(payments)
+    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(cleanPayments))
+    pushEntityToCloud('finance_payments', 'main', cleanPayments)
     broadcastPaymentSync()
   } catch (e) {
     console.error(e)
@@ -150,6 +162,7 @@ export function getTeamPayouts(): TeamPayout[] {
     list = DEFAULT_PAYOUTS
   }
 
+  list = filterOutLegacyDemoItems(list)
   const activeWOs = getLocalWorkOrders().filter((w) => !w.deleted_at && w.status !== 'deleted')
   const activeIds = new Set(activeWOs.map((w) => w.id))
   const activeWOnums = new Set(activeWOs.map((w) => w.work_order_number))
@@ -159,7 +172,8 @@ export function getTeamPayouts(): TeamPayout[] {
 
 export function saveTeamPayouts(payouts: TeamPayout[]): void {
   try {
-    localStorage.setItem(PAYOUTS_KEY, JSON.stringify(payouts))
+    const clean = filterOutLegacyDemoItems(payouts)
+    localStorage.setItem(PAYOUTS_KEY, JSON.stringify(clean))
     broadcastPaymentSync()
   } catch (e) {
     console.error(e)
@@ -177,6 +191,7 @@ export function getProjectExpenses(): ProjectExpense[] {
     list = DEFAULT_PROJECT_EXPENSES
   }
 
+  list = filterOutLegacyDemoItems(list)
   const activeWOs = getLocalWorkOrders().filter((w) => !w.deleted_at && w.status !== 'deleted')
   const activeIds = new Set(activeWOs.map((w) => w.id))
   const activeWOnums = new Set(activeWOs.map((w) => w.work_order_number))
@@ -186,7 +201,8 @@ export function getProjectExpenses(): ProjectExpense[] {
 
 export function saveProjectExpenses(expenses: ProjectExpense[]): void {
   try {
-    localStorage.setItem(PROJECT_EXPENSES_KEY, JSON.stringify(expenses))
+    const clean = filterOutLegacyDemoItems(expenses)
+    localStorage.setItem(PROJECT_EXPENSES_KEY, JSON.stringify(clean))
     broadcastPaymentSync()
   } catch (e) {
     console.error(e)
@@ -222,6 +238,7 @@ export function getInvoices(): InvoiceRecord[] {
     console.error(e)
   }
 
+  list = filterOutLegacyDemoItems(list)
   const activeWOs = getLocalWorkOrders().filter((w) => !w.deleted_at && w.status !== 'deleted')
   const activeIds = new Set(activeWOs.map((w) => w.id))
   const activeWOnums = new Set(activeWOs.map((w) => w.work_order_number))
@@ -231,7 +248,8 @@ export function getInvoices(): InvoiceRecord[] {
 
 export function saveInvoices(invoices: InvoiceRecord[]): void {
   try {
-    localStorage.setItem(INVOICES_KEY, JSON.stringify(invoices))
+    const clean = filterOutLegacyDemoItems(invoices)
+    localStorage.setItem(INVOICES_KEY, JSON.stringify(clean))
     broadcastPaymentSync()
   } catch (e) {
     console.error(e)

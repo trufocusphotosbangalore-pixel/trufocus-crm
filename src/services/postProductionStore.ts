@@ -2,6 +2,7 @@ import { broadcastPaymentSync } from '@/hooks/useRealtimeSync'
 import { getLocalWorkOrders } from '@/services/supabase/workOrders'
 import { WorkOrderWorkflowService } from '@/services/workOrderWorkflowService'
 import { pushEntityToCloud, broadcastCloudSync } from '@/services/cloudSyncService'
+import { filterOutLegacyDemoItems } from '@/utils/legacyDemoPurge'
 import type { WorkOrder } from '@/types/workOrders'
 import type {
   PostProductionItem,
@@ -82,7 +83,11 @@ export function getPostProductionItems(): PostProductionItem[] {
         if (parsed.length > 0 && Array.isArray(parsed[0])) {
           parsed = parsed.flat()
         }
-        storedItems = parsed.filter((i: any) => i && typeof i === 'object' && i.id)
+        const valid = parsed.filter((i: any) => i && typeof i === 'object' && i.id)
+        storedItems = filterOutLegacyDemoItems(valid)
+        if (storedItems.length !== valid.length) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(storedItems))
+        }
       }
     }
   } catch (e) {

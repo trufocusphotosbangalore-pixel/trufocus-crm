@@ -7,6 +7,7 @@ import {
   onSnapshot
 } from 'firebase/firestore'
 import { fetchAllEmployeesFromCloud } from './employeeService'
+import { filterOutLegacyDemoItems } from '@/utils/legacyDemoPurge'
 
 /**
  * Centralized Cloud Database Sync Service (Firebase / Firestore)
@@ -171,9 +172,11 @@ export async function initCloudDatabaseSync(): Promise<void> {
     if (localWOsStr) {
       try { localWOs = JSON.parse(localWOsStr) } catch (e) {}
     }
+    localWOs = filterOutLegacyDemoItems(localWOs)
 
     if (rawWoRows && rawWoRows.length > 0) {
-      const cloudWOs = extractEntitiesFromCloudRows(rawWoRows)
+      const extractedCloud = extractEntitiesFromCloudRows(rawWoRows)
+      const cloudWOs = filterOutLegacyDemoItems(extractedCloud)
       const mergedMap = new Map<string, any>()
       cloudWOs.forEach((w: any) => {
         const k = w.id || w.work_order_number
@@ -195,7 +198,7 @@ export async function initCloudDatabaseSync(): Promise<void> {
       localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify(mergedList))
       broadcastCloudSync('work_orders', mergedList)
 
-      if (hasNewLocal) {
+      if (hasNewLocal || cloudWOs.length !== extractedCloud.length) {
         await pushEntityToCloud('work_orders', 'main', mergedList)
       }
     } else if (Array.isArray(localWOs) && localWOs.length > 0) {
@@ -250,13 +253,22 @@ export async function initCloudDatabaseSync(): Promise<void> {
     const payRows = await pullTableFromCloud('finance_payments')
     const localPayStr = localStorage.getItem('trufocus_crm_payments_v1')
     if (payRows && payRows.length > 0) {
-      const payData = Array.isArray(payRows[0]) ? payRows[0] : payRows
-      localStorage.setItem('trufocus_crm_payments_v1', JSON.stringify(payData))
-      broadcastCloudSync('finance', payData)
+      let payData = payRows[0]
+      if (payData && typeof payData === 'object' && !Array.isArray(payData) && Array.isArray(payData.data)) {
+        payData = payData.data
+      }
+      if (Array.isArray(payData)) {
+        const cleanedPay = filterOutLegacyDemoItems(payData)
+        localStorage.setItem('trufocus_crm_payments_v1', JSON.stringify(cleanedPay))
+        broadcastCloudSync('finance', cleanedPay)
+        if (cleanedPay.length !== payData.length) {
+          await pushEntityToCloud('finance_payments', 'main', cleanedPay)
+        }
+      }
     } else if (localPayStr) {
       try {
-        const localPay = JSON.parse(localPayStr)
-        if (localPay) await pushEntityToCloud('finance_payments', 'main', localPay)
+        const localPay = filterOutLegacyDemoItems(JSON.parse(localPayStr))
+        if (localPay && localPay.length > 0) await pushEntityToCloud('finance_payments', 'main', localPay)
       } catch {}
     }
 
@@ -272,13 +284,17 @@ export async function initCloudDatabaseSync(): Promise<void> {
         if (postProdData.length > 0 && Array.isArray(postProdData[0])) {
           postProdData = postProdData.flat()
         }
-        localStorage.setItem('trufocus_crm_post_production_v1', JSON.stringify(postProdData))
-        broadcastCloudSync('post_production', postProdData)
+        const cleanedPostProd = filterOutLegacyDemoItems(postProdData)
+        localStorage.setItem('trufocus_crm_post_production_v1', JSON.stringify(cleanedPostProd))
+        broadcastCloudSync('post_production', cleanedPostProd)
+        if (cleanedPostProd.length !== postProdData.length) {
+          await pushEntityToCloud('post_production', 'main', cleanedPostProd)
+        }
       }
     } else if (localPostProdStr) {
       try {
-        const localPostProd = JSON.parse(localPostProdStr)
-        if (localPostProd) await pushEntityToCloud('post_production', 'main', localPostProd)
+        const localPostProd = filterOutLegacyDemoItems(JSON.parse(localPostProdStr))
+        if (localPostProd && localPostProd.length > 0) await pushEntityToCloud('post_production', 'main', localPostProd)
       } catch {}
     }
 

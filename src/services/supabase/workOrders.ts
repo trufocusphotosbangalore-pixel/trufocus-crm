@@ -15,6 +15,9 @@ import type { ApiResponse, PaginatedResult, SortConfig } from '@/types/common'
 const TABLE = 'work_orders'
 const LOCAL_STORAGE_WO_KEY = 'trufocus_crm_work_orders_v1'
 
+export { LEGACY_DEMO_WO_NUMBERS, LEGACY_DEMO_WO_IDS, isLegacyDemoWorkOrder, filterOutLegacyDemoItems } from '@/utils/legacyDemoPurge'
+import { isLegacyDemoWorkOrder } from '@/utils/legacyDemoPurge'
+
 const INITIAL_FALLBACK_WORK_ORDERS: any[] = []
 
 export function getLocalWorkOrders(): WorkOrder[] {
@@ -23,7 +26,11 @@ export function getLocalWorkOrders(): WorkOrder[] {
     if (raw !== null) {
       const items: WorkOrder[] = JSON.parse(raw)
       if (Array.isArray(items)) {
-        return items.map((wo) => recalculateWorkOrderFinancials(wo))
+        const cleaned = items.filter((w) => !isLegacyDemoWorkOrder(w))
+        if (cleaned.length !== items.length) {
+          localStorage.setItem(LOCAL_STORAGE_WO_KEY, JSON.stringify(cleaned))
+        }
+        return cleaned.map((wo) => recalculateWorkOrderFinancials(wo))
       }
     }
   } catch (e) {
