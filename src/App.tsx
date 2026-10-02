@@ -141,15 +141,24 @@ export default function App() {
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
+                {/* ── Core CRM & ERP Module Routes ── */}
                 <Route path="/dashboard" element={<ProtectedModuleRoute module="dashboard"><Dashboard /></ProtectedModuleRoute>} />
+                <Route path="/customers" element={<ProtectedModuleRoute module="enquiries"><Enquiries /></ProtectedModuleRoute>} />
                 <Route path="/enquiries" element={<ProtectedModuleRoute module="enquiries"><Enquiries /></ProtectedModuleRoute>} />
+                <Route path="/quotations" element={<ProtectedModuleRoute module="enquiries"><Enquiries /></ProtectedModuleRoute>} />
                 <Route path="/projects" element={<ProtectedModuleRoute module="work_orders"><WorkOrders /></ProtectedModuleRoute>} />
                 <Route path="/work-orders" element={<ProtectedModuleRoute module="work_orders"><WorkOrders /></ProtectedModuleRoute>} />
                 <Route path="/work-orders/new" element={<ProtectedModuleRoute module="work_orders"><WorkOrderNewPage /></ProtectedModuleRoute>} />
                 <Route path="/work-orders/:workOrderId" element={<ProtectedModuleRoute module="work_orders"><WorkOrderDetailsPage /></ProtectedModuleRoute>} />
+                <Route path="/workflow" element={<ProtectedModuleRoute module="work_orders"><WorkOrders /></ProtectedModuleRoute>} />
+                <Route path="/calendar" element={<ProtectedModuleRoute module="work_orders"><WorkOrders /></ProtectedModuleRoute>} />
                 <Route path="/post-production" element={<ProtectedModuleRoute module="post_production"><PostProduction /></ProtectedModuleRoute>} />
                 <Route path="/data" element={<ProtectedModuleRoute module="data"><DataManagementPage /></ProtectedModuleRoute>} />
                 <Route path="/direct-sales" element={<ProtectedModuleRoute module="finances"><DirectSalesPage /></ProtectedModuleRoute>} />
+                <Route path="/billing" element={<ProtectedModuleRoute module="finances"><Finances /></ProtectedModuleRoute>} />
+                <Route path="/receipts" element={<ProtectedModuleRoute module="finances"><Finances /></ProtectedModuleRoute>} />
+                <Route path="/ledger" element={<ProtectedModuleRoute module="finances"><Finances /></ProtectedModuleRoute>} />
+                <Route path="/reports" element={<ProtectedModuleRoute module="finances"><Finances /></ProtectedModuleRoute>} />
                 <Route path="/team" element={<Navigate to="/team/directory" replace />} />
                 <Route path="/team/directory" element={<ProtectedModuleRoute module="team"><TeamDirectoryPage /></ProtectedModuleRoute>} />
                 <Route path="/team/attendance" element={<ProtectedModuleRoute module="team"><AttendancePage /></ProtectedModuleRoute>} />
@@ -159,6 +168,7 @@ export default function App() {
                 <Route path="/client-requests" element={<ProtectedModuleRoute module="client_requests"><ClientRequestsPage /></ProtectedModuleRoute>} />
                 <Route path="/ai" element={<ProtectedModuleRoute module="trufocus_ai"><TrufocusAI /></ProtectedModuleRoute>} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/masters" element={<ProtectedModuleRoute module="settings"><SettingsPage /></ProtectedModuleRoute>} />
                 <Route path="/settings" element={<ProtectedModuleRoute module="settings"><SettingsPage /></ProtectedModuleRoute>} />
                 <Route path="/how-it-works" element={<HowItWorks />} />
                 {import.meta.env.DEV && (

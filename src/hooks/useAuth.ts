@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, createContext, useContext } from 'react'
+import { useEffect, useState, useCallback, createContext, useContext, useRef } from 'react'
 import * as authService from '@/services/authService'
+import * as sessionService from '@/services/sessionService'
 import type { AuthContextValue, Profile } from '@/types/auth'
 import { setActiveRoleId } from '@/services/permissionService'
 
@@ -42,106 +43,150 @@ export const AuthContext = createContext<AuthContextValue | null>(null)
 // ─── Provider hook (used in AuthProvider component) ───────────────────────────
 
 export function useAuthProvider(): AuthContextValue {
-  const [user, setUser] = useState<Profile | null>(() => getSavedSessionProfile())
+  // Initial state from vault/storage for instantaneous hydration
+  const initialVault = sessionService.getStoredVault()
+  const initialProfile = initialVault?.cachedProfile || getSavedSessionProfile()
+
+  const [user, setUser] = useState<Profile | null>(() => initialProfile)
+  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [sessionState, setSessionState] = useState<
+    'authenticated' | 'unauthenticated' | 'restoring' | 'expired'
+  >(() => (initialProfile ? 'restoring' : 'unauthenticated'))
   const [isLoading, setIsLoading] = useState(true)
 
-  /** Build a fallback profile from an auth user */
-  const buildFallbackProfile = (authUser: { id: string; email?: string | null; user_metadata?: any }): Profile => ({
-    id: authUser.id,
-    email: authUser.email ?? '',
-    full_name: authUser.user_metadata?.full_name ?? (authUser.email ? authUser.email.split('@')[0] : 'Staff Member'),
-    avatar_url: authUser.user_metadata?.avatar_url ?? null,
-    role: 'photographer',
-    role_id: 'owner',
-    role_name: 'Owner',
-    system_role: 'owner',
-    company: 'Trufocus Photography',
-    phone: null,
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-    created_by: null,
-    deleted_at: null,
-  })
+  const isRestoringRef = useRef(false)
 
-  /** Load profile from Supabase session with local session fallback */
-  const loadUser = useCallback(async () => {
+  /** Apply profile & session credentials to state */
+  const applyAuthenticatedUser = useCallback((profile: Profile, token: string | null) => {
+    setUser(profile)
+    setAccessToken(token)
+    setSessionState('authenticated')
+    saveSessionProfile(profile)
+
+    const activeRole = profile.role_id || profile.workspace_role || profile.role
+    if (activeRole) {
+      setActiveRoleId(activeRole)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('trufocus_permissions_updated'))
+    }
+  }, [])
+
+  /** Clear all authentication credentials from state */
+  const applyUnauthenticated = useCallback(() => {
+    setUser(null)
+    setAccessToken(null)
+    setSessionState('unauthenticated')
+    clearSavedSessionProfile()
+  }, [])
+
+  /** Validate and restore session on page refresh or startup */
+  const restoreSession = useCallback(async () => {
+    if (isRestoringRef.current) return
+    isRestoringRef.current = true
     setIsLoading(true)
+
     try {
-      const session = await authService.getSession()
-      if (session?.user) {
-        const profile = await authService.getProfile(session.user.id)
-        const userProf = profile ?? buildFallbackProfile(session.user)
-        saveSessionProfile(userProf)
-        setUser(userProf)
-        if (userProf.role_id) {
-          setActiveRoleId(userProf.role_id)
-        }
+      const result = await sessionService.validateAndRestoreSession()
+      if (result.success && result.profile) {
+        applyAuthenticatedUser(result.profile, result.accessToken)
       } else {
-        // Fall back to saved local session if present
-        const savedProf = getSavedSessionProfile()
-        if (savedProf) {
-          setUser(savedProf)
-          if (savedProf.role_id) {
-            setActiveRoleId(savedProf.role_id)
-          }
-        } else {
-          setUser(null)
-        }
+        applyUnauthenticated()
       }
-    } catch {
-      const savedProf = getSavedSessionProfile()
-      setUser(savedProf)
+    } catch (err) {
+      console.warn('[AUTH] Error during session restoration:', err)
+      // Check if we have a valid fallback
+      const fallback = sessionService.getStoredVault()
+      if (fallback?.cachedProfile && new Date(fallback.expiresAt).getTime() > Date.now()) {
+        applyAuthenticatedUser(fallback.cachedProfile, null)
+      } else {
+        applyUnauthenticated()
+      }
     } finally {
       setIsLoading(false)
+      isRestoringRef.current = false
     }
-  }, [])
+  }, [applyAuthenticatedUser, applyUnauthenticated])
 
+  // Initial session restoration on mount
   useEffect(() => {
-    loadUser()
+    restoreSession()
+  }, [restoreSession])
 
-    // Listen for auth state changes
-    const { data: { subscription } } = authService.onAuthStateChange(
-      async (event, session) => {
-        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
-          const profile = await authService.getProfile(session.user.id)
-          const userProf = profile ?? buildFallbackProfile(session.user)
-          saveSessionProfile(userProf)
-          setUser(userProf)
-          if (userProf.role_id) {
-            setActiveRoleId(userProf.role_id)
+  // Periodic automatic token refresh (every 5 minutes)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (user && sessionState === 'authenticated') {
+        sessionService.validateAndRestoreSession().then((res) => {
+          if (res.success && res.accessToken) {
+            setAccessToken(res.accessToken)
+          } else if (res.reason === 'SESSION_EXPIRED' || res.reason === 'SESSION_REVOKED' || res.reason === 'ACCOUNT_DISABLED') {
+            applyUnauthenticated()
           }
-        } else if (event === 'SIGNED_OUT') {
-          clearSavedSessionProfile()
-          setUser(null)
-        }
+        })
+      }
+    }, sessionService.AUTH_CONFIG.AUTO_REFRESH_CHECK_INTERVAL_MS)
+
+    return () => clearInterval(timer)
+  }, [user, sessionState, applyUnauthenticated])
+
+  // Multi-tab synchronization listener
+  useEffect(() => {
+    const unsubscribeSync = sessionService.onAuthSync((type, payload) => {
+      if (type === 'LOGOUT') {
+        applyUnauthenticated()
+      } else if (type === 'LOGIN') {
+        restoreSession()
+      }
+    })
+
+    return () => unsubscribeSync()
+  }, [applyUnauthenticated, restoreSession])
+
+  const signIn = useCallback(
+    async (email: string, password: string, customProfile?: Partial<Profile>) => {
+      setIsLoading(true)
+      try {
+        const result = await authService.signIn(email, password, customProfile)
+        if (result.error) throw new Error(result.error)
+        if (!result.data) throw new Error('No user profile returned.')
+
+        // Create persistent session with refresh & access tokens
+        const session = await sessionService.createSession(result.data)
+        applyAuthenticatedUser(session.profile, session.accessToken)
+      } finally {
         setIsLoading(false)
       }
-    )
-
-    return () => subscription.unsubscribe()
-  }, [loadUser])
-
-  const signIn = useCallback(async (email: string, password: string, customProfile?: Partial<Profile>) => {
-    const result = await authService.signIn(email, password, customProfile)
-    if (result.error) throw new Error(result.error)
-    if (result.data) {
-      saveSessionProfile(result.data)
-      if (result.data.role_id) {
-        setActiveRoleId(result.data.role_id)
-      }
-      setUser(result.data)
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('trufocus_permissions_updated'))
-      }
-    }
-  }, [])
+    },
+    [applyAuthenticatedUser]
+  )
 
   const signOut = useCallback(async () => {
-    clearSavedSessionProfile()
-    await authService.signOut()
-    setUser(null)
-  }, [])
+    setIsLoading(true)
+    try {
+      await sessionService.terminateSession()
+      await authService.signOut()
+    } finally {
+      applyUnauthenticated()
+      setIsLoading(false)
+    }
+  }, [applyUnauthenticated])
+
+  const refreshSession = useCallback(async (): Promise<boolean> => {
+    try {
+      const res = await sessionService.validateAndRestoreSession()
+      if (res.success && res.profile) {
+        applyAuthenticatedUser(res.profile, res.accessToken)
+        return true
+      }
+      applyUnauthenticated()
+      return false
+    } catch {
+      applyUnauthenticated()
+      return false
+    }
+  }, [applyAuthenticatedUser, applyUnauthenticated])
 
   const resetPassword = useCallback(async (email: string) => {
     const result = await authService.resetPasswordForEmail(email)
@@ -153,14 +198,34 @@ export function useAuthProvider(): AuthContextValue {
     if (result.error) throw new Error(result.error)
   }, [])
 
+  // Derived state fields for centralized authentication consumers
+  const currentUser = user
+  const userId = user?.id || null
+  const userName = user?.full_name || (user?.email ? user.email.split('@')[0] : null)
+  const userEmail = user?.email || null
+  const role = user?.role_id || user?.workspace_role || user?.role || null
+  const department = sessionService.deriveDepartment(user)
+  const permissions = user?.module_access || null
+  const isAuthenticated = !!user && sessionState === 'authenticated'
+
   return {
     user,
+    currentUser,
+    userId,
+    userName,
+    userEmail,
+    role,
+    department,
+    permissions,
+    accessToken,
+    sessionState,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated,
     signIn,
     signOut,
     resetPassword,
     updatePassword,
+    refreshSession,
   }
 }
 

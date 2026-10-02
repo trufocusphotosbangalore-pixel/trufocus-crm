@@ -13,10 +13,13 @@ export function ProtectedRoute() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
         <div className="space-y-4 text-center">
-          <div className="size-12 rounded-2xl bg-[#5B3FD9]/10 text-[#5B3FD9] flex items-center justify-center mx-auto animate-pulse border border-[#5B3FD9]/20">
+          <div className="size-12 rounded-2xl bg-[#5B3FD9]/10 text-[#5B3FD9] flex items-center justify-center mx-auto animate-pulse border border-[#5B3FD9]/20 shadow-xs">
             <span className="font-black text-lg">TF</span>
           </div>
-          <p className="text-xs font-bold text-gray-600">Loading Trufocus Studio Control Center...</p>
+          <div>
+            <p className="text-sm font-semibold text-gray-800">Restoring session...</p>
+            <p className="text-xs text-gray-400 mt-0.5">Verifying credentials and access permissions</p>
+          </div>
         </div>
       </div>
     )
@@ -36,10 +39,13 @@ export function PublicRoute() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
         <div className="space-y-4 text-center">
-          <div className="size-12 rounded-2xl bg-[#5B3FD9]/10 text-[#5B3FD9] flex items-center justify-center mx-auto animate-pulse border border-[#5B3FD9]/20">
+          <div className="size-12 rounded-2xl bg-[#5B3FD9]/10 text-[#5B3FD9] flex items-center justify-center mx-auto animate-pulse border border-[#5B3FD9]/20 shadow-xs">
             <span className="font-black text-lg">TF</span>
           </div>
-          <p className="text-xs font-bold text-gray-600">Verifying session...</p>
+          <div>
+            <p className="text-sm font-semibold text-gray-800">Restoring session...</p>
+            <p className="text-xs text-gray-400 mt-0.5">Checking authentication state</p>
+          </div>
         </div>
       </div>
     )

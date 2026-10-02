@@ -39,10 +39,20 @@ export interface Profile {
 /** Auth context value exposed to the app */
 export interface AuthContextValue {
   user: Profile | null
+  currentUser: Profile | null
+  userId: string | null
+  userName: string | null
+  userEmail: string | null
+  role: string | null
+  department: string | null
+  permissions: Record<string, boolean> | null
+  accessToken: string | null
+  sessionState: 'authenticated' | 'unauthenticated' | 'restoring' | 'expired'
   isLoading: boolean
   isAuthenticated: boolean
   signIn: (email: string, password: string, customProfile?: Partial<Profile>) => Promise<void>
   signOut: () => Promise<void>
   resetPassword: (email: string) => Promise<void>
   updatePassword: (password: string) => Promise<void>
+  refreshSession: () => Promise<boolean>
 }

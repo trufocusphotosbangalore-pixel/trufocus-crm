@@ -1,4 +1,4 @@
-﻿import { auth } from './firebase/client'
+import { auth } from './firebase/client'
 import * as firebaseAuth from './firebase/auth'
 import { fetchAllEmployeesFromCloud } from './employeeService'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -11,7 +11,10 @@ export async function signIn(
   return firebaseAuth.signIn(email, password, customProfile)
 }
 
+import { onAuthSync, terminateSession } from './sessionService'
+
 export async function signOut() {
+  await terminateSession()
   return firebaseAuth.signOut()
 }
 
@@ -32,26 +35,37 @@ export async function getProfile(userId: string, email?: string) {
 }
 
 export function onAuthStateChange(callback: (event: string, session: any) => void) {
-  const unsubscribe = onAuthStateChanged(auth, (user) => {
+  // Listen for multi-tab auth events
+  const unsubSync = onAuthSync((type, payload) => {
+    if (type === 'LOGOUT') {
+      callback('SIGNED_OUT', null)
+    } else if (type === 'LOGIN') {
+      callback('SIGNED_IN', payload)
+    }
+  })
+
+  // Also listen to Firebase auth if connected
+  const unsubFirebase = onAuthStateChanged(auth, (user) => {
     if (user) {
       callback('SIGNED_IN', {
         user: {
           id: user.uid,
           email: user.email,
-          user_metadata: { full_name: user.displayName }
-        }
+          user_metadata: { full_name: user.displayName },
+        },
       })
-    } else {
-      callback('SIGNED_OUT', null)
     }
   })
 
   return {
     data: {
       subscription: {
-        unsubscribe
-      }
-    }
+        unsubscribe: () => {
+          unsubSync()
+          unsubFirebase()
+        },
+      },
+    },
   }
 }
 
