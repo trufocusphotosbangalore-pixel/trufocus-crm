@@ -174,29 +174,29 @@ export async function initCloudDatabaseSync(): Promise<void> {
 
     if (rawWoRows && rawWoRows.length > 0) {
       const cloudWOs = extractEntitiesFromCloudRows(rawWoRows)
-      if (cloudWOs.length > 0) {
-        const mergedMap = new Map<string, any>()
-        cloudWOs.forEach((w: any) => mergedMap.set(w.id || w.work_order_number, w))
-        let hasNewLocal = false
-        if (Array.isArray(localWOs)) {
-          localWOs.forEach((w: any) => {
-            const key = w.id || w.work_order_number
-            if (key && !mergedMap.has(key)) {
-              mergedMap.set(key, w)
-              hasNewLocal = true
-            }
-          })
-        }
-        const mergedList = Array.from(mergedMap.values())
-        localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify(mergedList))
-        broadcastCloudSync('work_orders', mergedList)
+      const mergedMap = new Map<string, any>()
+      cloudWOs.forEach((w: any) => {
+        const k = w.id || w.work_order_number
+        if (k) mergedMap.set(k, w)
+      })
 
-        if (hasNewLocal) {
-          pushEntityToCloud('work_orders', 'main', mergedList)
-        }
-      } else {
-        localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify([]))
-        broadcastCloudSync('work_orders', [])
+      let hasNewLocal = false
+      if (Array.isArray(localWOs)) {
+        localWOs.forEach((w: any) => {
+          const key = w.id || w.work_order_number
+          if (key && !mergedMap.has(key)) {
+            mergedMap.set(key, w)
+            hasNewLocal = true
+          }
+        })
+      }
+
+      const mergedList = Array.from(mergedMap.values())
+      localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify(mergedList))
+      broadcastCloudSync('work_orders', mergedList)
+
+      if (hasNewLocal) {
+        await pushEntityToCloud('work_orders', 'main', mergedList)
       }
     } else if (Array.isArray(localWOs) && localWOs.length > 0) {
       // Cloud is empty, seed cloud with existing local work orders

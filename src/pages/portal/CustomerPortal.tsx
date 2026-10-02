@@ -9,7 +9,7 @@ import {
 import { cn } from '@/utils/cn'
 import { formatDate } from '@/lib/utils'
 import { getLocalWorkOrders, isWorkOrderContractSigned, fetchWorkOrderFromSupabase, saveLocalWorkOrdersOnly, recalculateWorkOrderFinancials } from '@/services/supabase/workOrders'
-import { pullTableFromCloud, extractEntitiesFromCloudRows } from '@/services/cloudSyncService'
+import { pullTableFromCloud, extractEntitiesFromCloudRows, pushEntityToCloud } from '@/services/cloudSyncService'
 import { processRazorpayPayment } from '@/services/razorpayService'
 import { useRealtimeSync } from '@/hooks/useRealtimeSync'
 import type { WorkOrder } from '@/types/workOrders'
@@ -17,6 +17,8 @@ import { WorkOrderWorkflowService } from '@/services/workOrderWorkflowService'
 import {
   getOrCreatePortalForWorkOrder,
   verifyPortalPin,
+  loadAllPortals,
+  saveAllPortals,
   getMoodboardItems,
   addMoodboardItem,
 } from '@/services/customerPortalStore'
@@ -76,35 +78,41 @@ export default function CustomerPortal() {
       setIsLoading(false)
       return
     }
-    const cleanNum = workOrderNumber.trim().toUpperCase()
+    const decoded = decodeURIComponent(workOrderNumber || '').trim()
+    const cleanNum = decoded.toUpperCase()
+    const normTarget = cleanNum.replace(/[^A-Z0-9]/g, '')
     let isMounted = true
 
     const loadWorkOrderData = async () => {
       setIsLoading(true)
       try {
-        const allWo = getLocalWorkOrders()
-        let wo = allWo.find(
-          (w: WorkOrder) =>
-            (w.work_order_number || '').toUpperCase() === cleanNum ||
-            (w.id || '').toUpperCase() === cleanNum
-        )
-
-        // Query Cloud DB directly to ensure persistent remote state is loaded
-        const remoteWO = await fetchWorkOrderFromSupabase(cleanNum)
-        if (remoteWO) {
-          wo = remoteWO
+        const isMatch = (w: any) => {
+          if (!w) return false
+          const wNum = (w.work_order_number || '').trim().toUpperCase()
+          const wId = (w.id || '').trim().toUpperCase()
+          if (wNum === cleanNum || wId === cleanNum) return true
+          if (wNum.replace(/[^A-Z0-9]/g, '') === normTarget) return true
+          if (wId.replace(/[^A-Z0-9]/g, '') === normTarget) return true
+          return false
         }
 
+        const allWo = getLocalWorkOrders()
+        let wo = allWo.find(isMatch)
+
+        // 1. Query Cloud directly via fetchWorkOrderFromSupabase
+        if (!wo) {
+          const remoteWO = await fetchWorkOrderFromSupabase(cleanNum)
+          if (remoteWO && isMatch(remoteWO)) {
+            wo = remoteWO
+          }
+        }
+
+        // 2. Query Cloud Firestore 'work_orders' table
         if (!wo) {
           const remoteRows = await pullTableFromCloud('work_orders')
           if (remoteRows && remoteRows.length > 0) {
             const cloudWOs = extractEntitiesFromCloudRows(remoteRows)
-            const matched = cloudWOs.find(
-              (w: any) =>
-                w &&
-                ((w.work_order_number || '').toUpperCase() === cleanNum ||
-                  (w.id || '').toUpperCase() === cleanNum)
-            )
+            const matched = cloudWOs.find(isMatch)
             if (matched) {
               wo = recalculateWorkOrderFinancials(matched)
               saveLocalWorkOrdersOnly([wo, ...allWo.filter((x) => x.id !== wo!.id)])
@@ -112,87 +120,111 @@ export default function CustomerPortal() {
           }
         }
 
-        if (!wo) {
+        // 3. Fallback: check 'customer_portals' collection to load actual project & customer metadata
+        let portalRecord: CustomerPortalData | null = null
+        const allPortals = loadAllPortals()
+        portalRecord = allPortals.find(
+          (p) =>
+            (p.work_order_number || '').trim().toUpperCase() === cleanNum ||
+            (p.work_order_id || '').trim().toUpperCase() === cleanNum ||
+            (p.id || '').trim().toUpperCase() === cleanNum ||
+            (p.work_order_number || '').replace(/[^A-Z0-9]/g, '') === normTarget
+        ) || null
+
+        if (!portalRecord) {
+          const portalRows = await pullTableFromCloud('customer_portals')
+          if (portalRows && portalRows.length > 0) {
+            let pData: any = portalRows[0]
+            if (pData && typeof pData === 'object' && !Array.isArray(pData) && Array.isArray(pData.data)) {
+              pData = pData.data
+            }
+            if (Array.isArray(pData)) {
+              portalRecord = pData.find(
+                (p: any) =>
+                  (p.work_order_number || '').trim().toUpperCase() === cleanNum ||
+                  (p.work_order_id || '').trim().toUpperCase() === cleanNum ||
+                  (p.id || '').trim().toUpperCase() === cleanNum ||
+                  (p.work_order_number || '').replace(/[^A-Z0-9]/g, '') === normTarget
+              ) || null
+            }
+          }
+        }
+
+        // If work order wasn't found in work_orders table but portal record exists (e.g. TRIVENI STUDIO)
+        if (!wo && portalRecord) {
           wo = {
-            id: 'wo-' + cleanNum.toLowerCase(),
-            work_order_number: cleanNum,
-            project_name: `Photography Project (${cleanNum})`,
-            customer_name: 'Valued Client',
-            mobile: '+91 98765 43210',
-            whatsapp_number: '+91 98765 43210',
-            email: 'client@example.com',
-            event_type: 'Wedding & Reception Shoot',
-            booking_date: new Date().toISOString().split('T')[0],
-            source: 'website',
-            venue: 'Grand Palace Lawns',
+            id: portalRecord.work_order_id || ('wo-' + cleanNum.toLowerCase()),
+            work_order_number: portalRecord.work_order_number || cleanNum,
+            project_name: portalRecord.project_name || `Project ${cleanNum}`,
+            customer_name: portalRecord.customer_name || 'Client',
+            mobile: portalRecord.mobile || '',
+            whatsapp_number: portalRecord.mobile || null,
+            email: portalRecord.email || null,
+            event_type: 'Event Photography & Film',
+            booking_date: portalRecord.created_at ? portalRecord.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+            source: 'customer_portal',
+            venue: 'Studio / Client Venue',
             city: 'Bengaluru',
-            notes: 'Customer Portal Access',
+            notes: 'Customer Portal',
             status: 'upcoming',
-            payment_status: 'advance_received',
-            contract_status: 'signed',
-            progress_percent: 45,
-            events: [
-              {
-                id: 'ev-m1',
-                work_order_id: 'wo-' + cleanNum.toLowerCase(),
-                event_type_id: 'et-m1',
-                event_type_name: 'Wedding & Reception Shoot',
-                event_date: new Date().toISOString().split('T')[0],
-                event_time: '18:00',
-                venue: 'Grand Palace Lawns',
-                google_map_link: '',
-                notes: 'Main Ceremony & Stage Photos',
-                services: [],
-              },
-            ],
-            deliverables: [
-              { id: 'del-m1', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-1', name: 'Edited High-Res Photos', is_included: true, is_delivered: false },
-              { id: 'del-m2', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-2', name: 'Cinematic Teaser Trailer', is_included: true, is_delivered: false },
-              { id: 'del-m3', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-3', name: 'Canvera Photobook Album', is_included: true, is_delivered: false },
-            ],
+            payment_status: 'pending',
+            contract_status: 'pending',
+            contract_accepted_at: null,
+            progress_percent: 10,
+            events: [],
+            deliverables: [],
             payment: {
-              package_amount: 150000,
+              package_amount: 0,
               discount_amount: 0,
+              gst_applicable: false,
               gst_percent: 0,
               gst_amount: 0,
-              net_amount: 150000,
-              amount_received: 50000,
-              balance_amount: 100000,
-              payment_status: 'partially_paid',
-              ledger: [
-                {
-                  id: 'pay-m1',
-                  work_order_id: 'wo-' + cleanNum.toLowerCase(),
-                  payment_date: new Date().toISOString().split('T')[0],
-                  amount: 50000,
-                  payment_mode: 'UPI',
-                  transaction_ref: 'UPI/RETAINER/50192',
-                  received_by: 'Studio Accounts',
-                  notes: 'Advance Retainer Received',
-                },
-              ],
+              net_amount: 0,
+              amount_received: 0,
+              balance_amount: 0,
+              payment_status: 'pending',
+              ledger: [],
             },
             contract: {
-              title: 'Photography Agreement',
+              title: 'Standard Photography & Videography Agreement',
               agreement_number: `TRF-AGR-${cleanNum}`,
               agreement_date: new Date().toISOString().split('T')[0],
               valid_until: '',
-              customer_signature: 'Valued Client',
-              studio_signature: 'Trufocus Director',
-              terms_content: '<h2>Agreement Terms</h2><p>Standard photography agreement and terms apply.</p>',
-              status: 'signed',
+              customer_signature: '',
+              studio_signature: 'Trufocus Photography',
+              terms_content: `<h2>1. Photography & Videography Agreement</h2>
+<p>This Agreement is entered into between Trufocus Photography and <strong>${portalRecord.customer_name}</strong> for the project <strong>${portalRecord.project_name}</strong>.</p>
+<h2>2. Coverage & Services</h2>
+<p>Trufocus Photography agrees to provide photographic and video coverage as scheduled. Any additional hours or specialized requirements requested on-site will be billed separately.</p>
+<h2>3. Deliverables & Schedule</h2>
+<p>Deliverables will be completed and handed over according to studio post-production timelines upon full settlement of account balances.</p>
+<h2>4. Terms & Acceptance</h2>
+<p>By signing below, the client agrees to the terms and authorizes Trufocus Photography to commence project scheduling.</p>`,
+              status: 'pending',
             },
           } as unknown as WorkOrder
+
+          saveLocalWorkOrdersOnly([wo, ...allWo.filter((x) => x.id !== wo!.id)])
+          await pushEntityToCloud('work_orders', 'main', [wo, ...allWo.filter((x) => x.id !== wo!.id)])
         }
 
-        if (isMounted && wo) {
-          setWorkOrder(wo)
-          const prt = getOrCreatePortalForWorkOrder(wo)
-          setPortal(prt)
-          setMoodboardItems(getMoodboardItems(prt.id))
+        if (isMounted) {
+          if (wo) {
+            setWorkOrder(wo)
+            const prt = portalRecord || getOrCreatePortalForWorkOrder(wo)
+            setPortal(prt)
+            setMoodboardItems(getMoodboardItems(prt.id))
+          } else {
+            setWorkOrder(null)
+            setPortal(null)
+          }
         }
       } catch (err) {
         console.error('Error loading Customer Portal data:', err)
+        if (isMounted) {
+          setWorkOrder(null)
+          setPortal(null)
+        }
       } finally {
         if (isMounted) {
           setIsLoading(false)
