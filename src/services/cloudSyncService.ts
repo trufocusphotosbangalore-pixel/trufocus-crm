@@ -194,6 +194,9 @@ export async function initCloudDatabaseSync(): Promise<void> {
         if (hasNewLocal) {
           pushEntityToCloud('work_orders', 'main', mergedList)
         }
+      } else {
+        localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify([]))
+        broadcastCloudSync('work_orders', [])
       }
     } else if (Array.isArray(localWOs) && localWOs.length > 0) {
       // Cloud is empty, seed cloud with existing local work orders
