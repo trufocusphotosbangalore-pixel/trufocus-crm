@@ -16,7 +16,7 @@ const TABLE = 'work_orders'
 const LOCAL_STORAGE_WO_KEY = 'trufocus_crm_work_orders_v1'
 
 export { LEGACY_DEMO_WO_NUMBERS, LEGACY_DEMO_WO_IDS, isLegacyDemoWorkOrder, filterOutLegacyDemoItems } from '@/utils/legacyDemoPurge'
-import { isLegacyDemoWorkOrder } from '@/utils/legacyDemoPurge'
+import { isLegacyDemoWorkOrder, filterOutLegacyDemoItems } from '@/utils/legacyDemoPurge'
 
 const INITIAL_FALLBACK_WORK_ORDERS: any[] = []
 
@@ -198,9 +198,9 @@ export async function fetchWorkOrders(
 ): Promise<PaginatedResult<WorkOrder>> {
   if (isCloudConfigured()) {
     try {
-      const { data, error } = await supabase.from(TABLE).select('*')
-      if (!error && data && data.length > 0) {
-        const cloudItems = extractEntitiesFromCloudRows<WorkOrder>(data)
+      const rawRows = await pullTableFromCloud(TABLE)
+      if (rawRows && rawRows.length > 0) {
+        const cloudItems = filterOutLegacyDemoItems(extractEntitiesFromCloudRows<WorkOrder>(rawRows))
         if (cloudItems.length > 0) {
           const localItems = getLocalWorkOrders()
           const mergedMap = new Map<string, WorkOrder>()
@@ -250,7 +250,14 @@ export async function fetchWorkOrders(
                   localHadChanges = true
                 }
               } else {
-                mergedMap.set(key, lTime >= cTime ? lItem : cItem)
+                if (cTime > lTime) {
+                  mergedMap.set(key, cItem)
+                } else if (lTime > cTime) {
+                  mergedMap.set(key, lItem)
+                  localHadChanges = true
+                } else {
+                  mergedMap.set(key, lItem)
+                }
               }
             } else if (cItem) {
               mergedMap.set(key, cItem)
@@ -312,27 +319,28 @@ export function fetchWorkOrdersLocal(
 export async function fetchWorkOrder(id: string): Promise<WorkOrder | null> {
   if (!id) return null
   const localList = getLocalWorkOrders()
-  const local = localList.find((w) => w.id === id || w.work_order_number.toLowerCase() === id.toLowerCase())
-
-  if (local) {
-    return local
-  }
+  let local = localList.find((w) => w.id === id || w.work_order_number.toLowerCase() === id.toLowerCase()) || null
 
   if (isCloudConfigured()) {
     try {
-      const { data, error } = await supabase
-        .from(TABLE)
-        .select('*')
-        .or(`id.eq.${id},work_order_number.eq.${id}`)
-        .limit(1)
+      const rawRows = await pullTableFromCloud(TABLE)
+      if (rawRows && rawRows.length > 0) {
+        const cloudItems = filterOutLegacyDemoItems(extractEntitiesFromCloudRows<WorkOrder>(rawRows))
+        const found = cloudItems.find((w) => w.id === id || w.work_order_number.toLowerCase() === id.toLowerCase())
 
-      if (!error && data && data.length > 0) {
-        const cloudItems = extractEntitiesFromCloudRows<WorkOrder>(data)
-        if (cloudItems.length > 0) {
-          const found = cloudItems[0]
-          const updatedList = [found, ...localList.filter((w) => w.id !== found.id && w.work_order_number !== found.work_order_number)]
-          saveLocalWorkOrdersOnly(updatedList)
-          return found
+        if (found) {
+          if (!local) {
+            local = found
+            saveLocalWorkOrdersOnly([found, ...localList.filter((w) => w.id !== found.id && w.work_order_number !== found.work_order_number)])
+          } else {
+            const localTime = new Date(local.updated_at || local.created_at || 0).getTime()
+            const cloudTime = new Date(found.updated_at || found.created_at || 0).getTime()
+            if (cloudTime > localTime) {
+              local = found
+              const updatedList = localList.map((w) => (w.id === found.id || w.work_order_number === found.work_order_number ? found : w))
+              saveLocalWorkOrdersOnly(updatedList)
+            }
+          }
         }
       }
     } catch (e) {
@@ -340,7 +348,7 @@ export async function fetchWorkOrder(id: string): Promise<WorkOrder | null> {
     }
   }
 
-  return null
+  return local
 }
 
 // ─── Create (from Wizard) ─────────────────────────────────────────────────────

@@ -57,6 +57,23 @@ export async function pushEntityToCloud(table: string, id: string, record: any):
       data: record,
       updated_at: new Date().toISOString(),
     }, { merge: true })
+
+    // If pushing a list of entities (such as work orders), also push individual docs so both array & single-doc queries stay in sync
+    if (Array.isArray(record)) {
+      for (const item of record) {
+        if (item && item.id) {
+          try {
+            const itemDocRef = doc(db, table, item.id)
+            await setDoc(itemDocRef, {
+              id: item.id,
+              data: item,
+              updated_at: item.updated_at || new Date().toISOString(),
+            }, { merge: true })
+          } catch {}
+        }
+      }
+    }
+
     return true
   } catch (e: any) {
     console.warn(`[CloudSync] Exception writing to collection '${table}':`, e.message || e)
@@ -70,6 +87,20 @@ export function extractEntitiesFromCloudRows<T = any>(rows: any[]): T[] {
 
   const entityMap = new Map<string, T>()
 
+  const putIfNewer = (key: string, item: any) => {
+    if (!key || !item) return
+    const existing = entityMap.get(key)
+    if (!existing) {
+      entityMap.set(key, item)
+    } else {
+      const existingTime = new Date((existing as any).updated_at || (existing as any).created_at || 0).getTime()
+      const itemTime = new Date(item.updated_at || item.created_at || 0).getTime()
+      if (itemTime >= existingTime) {
+        entityMap.set(key, item)
+      }
+    }
+  }
+
   rows.forEach((row) => {
     if (!row) return
     let content = (row.data !== undefined && row.data !== null) ? row.data : row
@@ -81,13 +112,15 @@ export function extractEntitiesFromCloudRows<T = any>(rows: any[]): T[] {
       content.forEach((item: any) => {
         if (item && typeof item === 'object') {
           const key = item.id || item.work_order_number || item.enquiry_number
-          if (key) entityMap.set(key, item)
+          if (key) putIfNewer(key, item)
         }
       })
     } else if (content && typeof content === 'object') {
       const mergedObj = { ...row, ...content }
       const key = mergedObj.id || mergedObj.work_order_number || mergedObj.enquiry_number
-      if (key && key !== 'main') entityMap.set(key, mergedObj as any)
+      if (key && key !== 'main') {
+        putIfNewer(key, mergedObj as any)
+      }
     }
   })
 
@@ -122,7 +155,50 @@ export function initRealtimeCloudListener(onSyncCallback: () => void): () => voi
     const collectionsToListen = ['work_orders', 'enquiries', 'business_profile', 'finance_payments']
     collectionsToListen.forEach((colName) => {
       try {
-        const unsub = onSnapshot(collection(db, colName), () => {
+        const unsub = onSnapshot(collection(db, colName), (snapshot) => {
+          if (colName === 'work_orders') {
+            try {
+              const rawDocs: any[] = []
+              snapshot.forEach((d) => {
+                const dData = d.data()
+                rawDocs.push(dData.data !== undefined ? dData.data : dData)
+              })
+              const cloudWOs = filterOutLegacyDemoItems(extractEntitiesFromCloudRows(rawDocs))
+              if (cloudWOs.length > 0) {
+                const localWOsStr = localStorage.getItem('trufocus_crm_work_orders_v1')
+                let localWOs: any[] = []
+                if (localWOsStr) {
+                  try { localWOs = JSON.parse(localWOsStr) } catch (e) {}
+                }
+                const mergedMap = new Map<string, any>()
+                cloudWOs.forEach((w: any) => {
+                  const k = w.id || w.work_order_number
+                  if (k) mergedMap.set(k, w)
+                })
+                if (Array.isArray(localWOs)) {
+                  localWOs.forEach((w: any) => {
+                    const key = w.id || w.work_order_number
+                    if (!key) return
+                    const cItem = mergedMap.get(key)
+                    if (!cItem) {
+                      mergedMap.set(key, w)
+                    } else {
+                      const lTime = new Date(w.updated_at || w.created_at || 0).getTime()
+                      const cTime = new Date(cItem.updated_at || cItem.created_at || 0).getTime()
+                      if (lTime > cTime) {
+                        mergedMap.set(key, w)
+                      }
+                    }
+                  })
+                }
+                const mergedList = Array.from(mergedMap.values())
+                localStorage.setItem('trufocus_crm_work_orders_v1', JSON.stringify(mergedList))
+              }
+            } catch (err) {
+              console.warn('[CloudSync] Realtime local hydration error on work_orders:', err)
+            }
+          }
+
           broadcastCloudSync(colName)
           activeRealtimeCallbacks.forEach((cb) => {
             try { cb() } catch (err) { console.error('Realtime sync callback error:', err) }
