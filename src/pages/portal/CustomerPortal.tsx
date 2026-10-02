@@ -8,7 +8,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { formatDate } from '@/lib/utils'
-import { getLocalWorkOrders, isWorkOrderContractSigned, fetchWorkOrderFromSupabase } from '@/services/supabase/workOrders'
+import { getLocalWorkOrders, isWorkOrderContractSigned, fetchWorkOrderFromSupabase, saveLocalWorkOrdersOnly, recalculateWorkOrderFinancials } from '@/services/supabase/workOrders'
+import { pullTableFromCloud, extractEntitiesFromCloudRows } from '@/services/cloudSyncService'
 import { processRazorpayPayment } from '@/services/razorpayService'
 import { useRealtimeSync } from '@/hooks/useRealtimeSync'
 import type { WorkOrder } from '@/types/workOrders'
@@ -34,6 +35,7 @@ export default function CustomerPortal() {
   const { workOrderNumber } = useParams<{ workOrderNumber: string }>()
   const navigate = useNavigate()
 
+  const [isLoading, setIsLoading] = useState(true)
   const [workOrder, setWorkOrder] = useState<WorkOrder | null>(null)
   const [bizProfile, setBizProfile] = useState(() => loadBusinessProfile())
 
@@ -70,99 +72,131 @@ export default function CustomerPortal() {
 
   // Load Work Order & Portal Data (Single Source of Truth from Supabase)
   useEffect(() => {
-    if (!workOrderNumber) return
-    const cleanNum = workOrderNumber.toUpperCase()
+    if (!workOrderNumber) {
+      setIsLoading(false)
+      return
+    }
+    const cleanNum = workOrderNumber.trim().toUpperCase()
+    let isMounted = true
 
     const loadWorkOrderData = async () => {
-      const allWo = getLocalWorkOrders()
-      let wo = allWo.find(
-        (w: WorkOrder) => w.work_order_number.toUpperCase() === cleanNum || w.id.toUpperCase() === cleanNum
-      )
+      setIsLoading(true)
+      try {
+        const allWo = getLocalWorkOrders()
+        let wo = allWo.find(
+          (w: WorkOrder) =>
+            (w.work_order_number || '').toUpperCase() === cleanNum ||
+            (w.id || '').toUpperCase() === cleanNum
+        )
 
-      // Query Supabase directly to ensure persistent remote state is loaded
-      const remoteWO = await fetchWorkOrderFromSupabase(cleanNum)
-      if (remoteWO) {
-        wo = remoteWO
-      }
+        // Query Cloud DB directly to ensure persistent remote state is loaded
+        const remoteWO = await fetchWorkOrderFromSupabase(cleanNum)
+        if (remoteWO) {
+          wo = remoteWO
+        }
 
-      if (!wo) {
-        wo = {
-          id: 'wo-' + cleanNum.toLowerCase(),
-          work_order_number: cleanNum,
-          project_name: `Photography Project (${cleanNum})`,
-          customer_name: 'Valued Client',
-          mobile: '+91 98765 43210',
-          whatsapp_number: '+91 98765 43210',
-          email: 'client@example.com',
-          event_type: 'Wedding & Reception Shoot',
-          booking_date: new Date().toISOString().split('T')[0],
-          source: 'website',
-          venue: 'Grand Palace Lawns',
-          city: 'Bengaluru',
-          notes: 'Customer Portal Access',
-          status: 'upcoming',
-          payment_status: 'advance_received',
-          contract_status: 'signed',
-          progress_percent: 45,
-          events: [
-            {
-              id: 'ev-m1',
-              work_order_id: 'wo-' + cleanNum.toLowerCase(),
-              event_type_id: 'et-m1',
-              event_type_name: 'Wedding & Reception Shoot',
-              event_date: new Date().toISOString().split('T')[0],
-              event_time: '18:00',
-              venue: 'Grand Palace Lawns',
-              google_map_link: '',
-              notes: 'Main Ceremony & Stage Photos',
-              services: [],
-            },
-          ],
-          deliverables: [
-            { id: 'del-m1', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-1', name: 'Edited High-Res Photos', is_included: true, is_delivered: false },
-            { id: 'del-m2', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-2', name: 'Cinematic Teaser Trailer', is_included: true, is_delivered: false },
-            { id: 'del-m3', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-3', name: 'Canvera Photobook Album', is_included: true, is_delivered: false },
-          ],
-          payment: {
-            package_amount: 150000,
-            discount_amount: 0,
-            gst_percent: 0,
-            gst_amount: 0,
-            net_amount: 150000,
-            amount_received: 50000,
-            balance_amount: 100000,
-            payment_status: 'partially_paid',
-            ledger: [
+        if (!wo) {
+          const remoteRows = await pullTableFromCloud('work_orders')
+          if (remoteRows && remoteRows.length > 0) {
+            const cloudWOs = extractEntitiesFromCloudRows(remoteRows)
+            const matched = cloudWOs.find(
+              (w: any) =>
+                w &&
+                ((w.work_order_number || '').toUpperCase() === cleanNum ||
+                  (w.id || '').toUpperCase() === cleanNum)
+            )
+            if (matched) {
+              wo = recalculateWorkOrderFinancials(matched)
+              saveLocalWorkOrdersOnly([wo, ...allWo.filter((x) => x.id !== wo!.id)])
+            }
+          }
+        }
+
+        if (!wo) {
+          wo = {
+            id: 'wo-' + cleanNum.toLowerCase(),
+            work_order_number: cleanNum,
+            project_name: `Photography Project (${cleanNum})`,
+            customer_name: 'Valued Client',
+            mobile: '+91 98765 43210',
+            whatsapp_number: '+91 98765 43210',
+            email: 'client@example.com',
+            event_type: 'Wedding & Reception Shoot',
+            booking_date: new Date().toISOString().split('T')[0],
+            source: 'website',
+            venue: 'Grand Palace Lawns',
+            city: 'Bengaluru',
+            notes: 'Customer Portal Access',
+            status: 'upcoming',
+            payment_status: 'advance_received',
+            contract_status: 'signed',
+            progress_percent: 45,
+            events: [
               {
-                id: 'pay-m1',
+                id: 'ev-m1',
                 work_order_id: 'wo-' + cleanNum.toLowerCase(),
-                payment_date: new Date().toISOString().split('T')[0],
-                amount: 50000,
-                payment_mode: 'UPI',
-                transaction_ref: 'UPI/RETAINER/50192',
-                received_by: 'Studio Accounts',
-                notes: 'Advance Retainer Received',
+                event_type_id: 'et-m1',
+                event_type_name: 'Wedding & Reception Shoot',
+                event_date: new Date().toISOString().split('T')[0],
+                event_time: '18:00',
+                venue: 'Grand Palace Lawns',
+                google_map_link: '',
+                notes: 'Main Ceremony & Stage Photos',
+                services: [],
               },
             ],
-          },
-          contract: {
-            title: 'Photography Agreement',
-            agreement_number: `TRF-AGR-${cleanNum}`,
-            agreement_date: new Date().toISOString().split('T')[0],
-            valid_until: '',
-            customer_signature: 'Valued Client',
-            studio_signature: 'Trufocus Director',
-            terms_content: '<h2>Agreement Terms</h2><p>Standard photography agreement and terms apply.</p>',
-            status: 'signed',
-          },
-        } as unknown as WorkOrder
-      }
+            deliverables: [
+              { id: 'del-m1', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-1', name: 'Edited High-Res Photos', is_included: true, is_delivered: false },
+              { id: 'del-m2', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-2', name: 'Cinematic Teaser Trailer', is_included: true, is_delivered: false },
+              { id: 'del-m3', work_order_id: 'wo-' + cleanNum.toLowerCase(), deliverable_id: 'del-3', name: 'Canvera Photobook Album', is_included: true, is_delivered: false },
+            ],
+            payment: {
+              package_amount: 150000,
+              discount_amount: 0,
+              gst_percent: 0,
+              gst_amount: 0,
+              net_amount: 150000,
+              amount_received: 50000,
+              balance_amount: 100000,
+              payment_status: 'partially_paid',
+              ledger: [
+                {
+                  id: 'pay-m1',
+                  work_order_id: 'wo-' + cleanNum.toLowerCase(),
+                  payment_date: new Date().toISOString().split('T')[0],
+                  amount: 50000,
+                  payment_mode: 'UPI',
+                  transaction_ref: 'UPI/RETAINER/50192',
+                  received_by: 'Studio Accounts',
+                  notes: 'Advance Retainer Received',
+                },
+              ],
+            },
+            contract: {
+              title: 'Photography Agreement',
+              agreement_number: `TRF-AGR-${cleanNum}`,
+              agreement_date: new Date().toISOString().split('T')[0],
+              valid_until: '',
+              customer_signature: 'Valued Client',
+              studio_signature: 'Trufocus Director',
+              terms_content: '<h2>Agreement Terms</h2><p>Standard photography agreement and terms apply.</p>',
+              status: 'signed',
+            },
+          } as unknown as WorkOrder
+        }
 
-      if (wo) {
-        setWorkOrder(wo)
-        const prt = getOrCreatePortalForWorkOrder(wo)
-        setPortal(prt)
-        setMoodboardItems(getMoodboardItems(prt.id))
+        if (isMounted && wo) {
+          setWorkOrder(wo)
+          const prt = getOrCreatePortalForWorkOrder(wo)
+          setPortal(prt)
+          setMoodboardItems(getMoodboardItems(prt.id))
+        }
+      } catch (err) {
+        console.error('Error loading Customer Portal data:', err)
+      } finally {
+        if (isMounted) {
+          setIsLoading(false)
+        }
       }
     }
 
@@ -172,23 +206,27 @@ export default function CustomerPortal() {
     if (sessionStorage.getItem(authKey) === 'true') {
       setIsAuthenticated(true)
     }
+
+    return () => {
+      isMounted = false
+    }
   }, [workOrderNumber])
 
   // Real-Time Event Sync across all open tabs and workflow engine
   useRealtimeSync(() => {
     if (!workOrderNumber) return
-    const cleanNum = workOrderNumber.toUpperCase()
+    const cleanNum = workOrderNumber.trim().toUpperCase()
     const allWo = getLocalWorkOrders()
-    const wo = allWo.find((w: WorkOrder) => w.work_order_number.toUpperCase() === cleanNum || w.id.toUpperCase() === cleanNum)
+    const wo = allWo.find((w: WorkOrder) => (w.work_order_number || '').toUpperCase() === cleanNum || (w.id || '').toUpperCase() === cleanNum)
     if (wo) setWorkOrder(wo)
   })
 
   useEffect(() => {
     const unsubscribe = WorkOrderWorkflowService.subscribeWorkflowChanges(() => {
       if (!workOrderNumber) return
-      const cleanNum = workOrderNumber.toUpperCase()
+      const cleanNum = workOrderNumber.trim().toUpperCase()
       const allWo = getLocalWorkOrders()
-      const wo = allWo.find((w: WorkOrder) => w.work_order_number.toUpperCase() === cleanNum || w.id.toUpperCase() === cleanNum)
+      const wo = allWo.find((w: WorkOrder) => (w.work_order_number || '').toUpperCase() === cleanNum || (w.id || '').toUpperCase() === cleanNum)
       if (wo) setWorkOrder({ ...wo })
     })
     return () => unsubscribe()
@@ -198,10 +236,11 @@ export default function CustomerPortal() {
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!workOrderNumber) return
-    const res = verifyPortalPin(workOrderNumber, inputPin)
+    const cleanNum = workOrderNumber.trim().toUpperCase()
+    const res = verifyPortalPin(cleanNum, inputPin, portal)
     if (res.success && res.portal) {
       setIsAuthenticated(true)
-      sessionStorage.setItem(`trufocus_portal_auth_${workOrderNumber}`, 'true')
+      sessionStorage.setItem(`trufocus_portal_auth_${cleanNum}`, 'true')
       toast.success('Access Granted! Welcome to your Customer Portal.')
     } else {
       toast.error(res.message || 'Invalid Access PIN')
@@ -280,16 +319,30 @@ export default function CustomerPortal() {
 
   const handleLogout = () => {
     if (workOrderNumber) {
-      sessionStorage.removeItem(`trufocus_portal_auth_${workOrderNumber}`)
+      sessionStorage.removeItem(`trufocus_portal_auth_${workOrderNumber.trim().toUpperCase()}`)
     }
     setIsAuthenticated(false)
     setInputPin('')
     toast.success('Logged out of Customer Portal')
   }
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#FAFAFC] flex flex-col items-center justify-center p-6 text-center font-sans">
+        <div className="size-14 rounded-2xl bg-[#5B3FD9]/10 flex items-center justify-center text-[#5B3FD9] mb-4 animate-pulse">
+          <Camera size={28} />
+        </div>
+        <h1 className="text-base font-bold text-[#111827]">Connecting to Customer Portal...</h1>
+        <p className="text-xs text-[#6B7280] mt-1 max-w-sm">
+          Securing private session for <span className="font-mono font-semibold text-[#111827]">{workOrderNumber}</span>
+        </p>
+      </div>
+    )
+  }
+
   if (!workOrder || !portal) {
     return (
-      <div className="min-h-screen bg-[#FAFAFC] flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-screen bg-[#FAFAFC] flex flex-col items-center justify-center p-6 text-center font-sans">
         <div className="size-14 rounded-2xl bg-[#5B3FD9]/10 flex items-center justify-center text-[#5B3FD9] mb-4">
           <Camera size={28} />
         </div>

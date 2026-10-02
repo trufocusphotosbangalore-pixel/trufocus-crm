@@ -282,6 +282,26 @@ export async function initCloudDatabaseSync(): Promise<void> {
       } catch {}
     }
 
+    // 7. Sync Customer Portals
+    const portalRows = await pullTableFromCloud('customer_portals')
+    const localPortalStr = localStorage.getItem('trufocus_crm_customer_portals_v1') || localStorage.getItem('trufocus_crm_portals_v1')
+    if (portalRows && portalRows.length > 0) {
+      let portalData = portalRows[0]
+      if (portalData && typeof portalData === 'object' && !Array.isArray(portalData) && Array.isArray(portalData.data)) {
+        portalData = portalData.data
+      }
+      if (Array.isArray(portalData)) {
+        localStorage.setItem('trufocus_crm_customer_portals_v1', JSON.stringify(portalData))
+        localStorage.setItem('trufocus_crm_portals_v1', JSON.stringify(portalData))
+        broadcastCloudSync('customer_portals', portalData)
+      }
+    } else if (localPortalStr) {
+      try {
+        const localPortals = JSON.parse(localPortalStr)
+        if (localPortals && localPortals.length > 0) await pushEntityToCloud('customer_portals', 'main', localPortals)
+      } catch {}
+    }
+
     console.log('✅ Firebase Cloud Database Hydration completed successfully!')
   } catch (e) {
     console.warn('Notice: Firebase Cloud Database Hydration skipped:', e)

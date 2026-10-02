@@ -6,7 +6,8 @@ import type { WorkOrder } from '@/types/workOrders'
 import { getLocalWorkOrders } from '@/services/supabase/workOrders'
 import { pushEntityToCloud } from '@/services/cloudSyncService'
 
-const PORTAL_STORAGE_KEY = 'trufocus_crm_portals_v1'
+const PORTAL_STORAGE_KEY = 'trufocus_crm_customer_portals_v1'
+const ALT_PORTAL_STORAGE_KEY = 'trufocus_crm_portals_v1'
 const MOODBOARD_STORAGE_KEY = 'trufocus_crm_moodboard_v1'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -27,7 +28,7 @@ export function generateStatic4DigitPin(workOrderNumber: string): string {
 }
 
 export function getPortalUrl(workOrderNumber: string): string {
-  const baseUrl = window.location.origin
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
   return `${baseUrl}/portal/customer/${encodeURIComponent(workOrderNumber)}`
 }
 
@@ -40,24 +41,37 @@ export function getQRCodeUrl(url: string): string {
 export function loadAllPortals(): CustomerPortalData[] {
   let list: CustomerPortalData[] = []
   try {
-    const raw = localStorage.getItem(PORTAL_STORAGE_KEY)
+    const raw = localStorage.getItem(PORTAL_STORAGE_KEY) || localStorage.getItem(ALT_PORTAL_STORAGE_KEY)
     if (raw) list = JSON.parse(raw)
   } catch (e) {
     console.error('Error loading customer portals', e)
   }
 
-  const activeWOs = getLocalWorkOrders().filter((w) => !w.deleted_at && w.status !== 'deleted')
-  const activeIds = new Set(activeWOs.map((w) => w.id))
-  const activeWOnums = new Set(activeWOs.map((w) => w.work_order_number))
+  if (!Array.isArray(list)) list = []
 
-  return list.filter(
-    (p) => activeIds.has(p.work_order_id) || activeWOnums.has(p.work_order_number)
-  )
+  // Exclude only explicitly soft-deleted work orders if present locally
+  try {
+    const localWOs = getLocalWorkOrders()
+    if (localWOs && localWOs.length > 0) {
+      const deletedWOs = localWOs.filter((w) => w.deleted_at || w.status === 'deleted')
+      const deletedIds = new Set(deletedWOs.map((w) => (w.id || '').toUpperCase()))
+      const deletedWOnums = new Set(deletedWOs.map((w) => (w.work_order_number || '').toUpperCase()))
+
+      return list.filter(
+        (p) =>
+          !deletedIds.has((p.work_order_id || '').toUpperCase()) &&
+          !deletedWOnums.has((p.work_order_number || '').toUpperCase())
+      )
+    }
+  } catch {}
+
+  return list
 }
 
 export function saveAllPortals(portals: CustomerPortalData[]): void {
   try {
     localStorage.setItem(PORTAL_STORAGE_KEY, JSON.stringify(portals))
+    localStorage.setItem(ALT_PORTAL_STORAGE_KEY, JSON.stringify(portals))
     pushEntityToCloud('customer_portals', 'main', portals)
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new CustomEvent('trufocus_portal_updated'))
@@ -71,23 +85,29 @@ export function saveAllPortals(portals: CustomerPortalData[]): void {
 
 export function getOrCreatePortalForWorkOrder(wo: WorkOrder): CustomerPortalData {
   const portals = loadAllPortals()
+  const woNum = (wo.work_order_number || wo.id || '').toUpperCase()
+  const woId = (wo.id || '').toUpperCase()
+
   let portal = portals.find(
-    (p) => p.work_order_number === wo.work_order_number || p.work_order_id === wo.id
+    (p) =>
+      (p.work_order_number && p.work_order_number.toUpperCase() === woNum) ||
+      (p.work_order_id && p.work_order_id.toUpperCase() === woId) ||
+      (p.id && p.id.toUpperCase() === woId)
   )
 
-  const staticPin = generate4DigitPin(wo.work_order_number)
+  const staticPin = generate4DigitPin(wo.work_order_number || wo.id)
 
   if (!portal) {
-    const link = getPortalUrl(wo.work_order_number)
+    const link = getPortalUrl(wo.work_order_number || wo.id)
     const qr = getQRCodeUrl(link)
 
     portal = {
-      id: 'prt-' + wo.work_order_number.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+      id: 'prt-' + (wo.work_order_number || wo.id).toLowerCase().replace(/[^a-z0-9]/g, '-'),
       work_order_id: wo.id,
-      work_order_number: wo.work_order_number,
-      project_name: wo.project_name,
-      customer_name: wo.customer_name,
-      mobile: wo.mobile,
+      work_order_number: wo.work_order_number || wo.id,
+      project_name: wo.project_name || `Project ${wo.work_order_number}`,
+      customer_name: wo.customer_name || 'Client',
+      mobile: wo.mobile || '',
       email: wo.email || undefined,
       pin_code: staticPin,
       share_link: link,
@@ -109,13 +129,13 @@ export function getOrCreatePortalForWorkOrder(wo: WorkOrder): CustomerPortalData
       created_at: new Date().toISOString(),
     }
 
-    saveAllPortals([portal, ...portals])
+    saveAllPortals([portal, ...portals.filter((p) => p.id !== portal!.id)])
   } else {
     let modified = false
-    const currentLink = getPortalUrl(wo.work_order_number)
+    const currentLink = getPortalUrl(wo.work_order_number || wo.id)
 
     // Ensure PIN code is static across systems
-    if (portal.pin_code !== staticPin) {
+    if (!portal.pin_code || portal.pin_code !== staticPin) {
       portal.pin_code = staticPin
       modified = true
     }
@@ -134,27 +154,76 @@ export function getOrCreatePortalForWorkOrder(wo: WorkOrder): CustomerPortalData
   return portal
 }
 
-export function verifyPortalPin(workOrderNumber: string, pin: string): { success: boolean; portal?: CustomerPortalData; message?: string } {
+export function verifyPortalPin(
+  workOrderNumber: string,
+  pin: string,
+  existingPortal?: CustomerPortalData | null
+): { success: boolean; portal?: CustomerPortalData; message?: string } {
+  if (!workOrderNumber) {
+    return { success: false, message: 'Invalid Work Order reference.' }
+  }
+
+  const cleanNum = workOrderNumber.trim().toUpperCase()
   let portals = loadAllPortals()
-  let portal = portals.find(p => p.work_order_number.toLowerCase() === workOrderNumber.toLowerCase())
+  let portal =
+    existingPortal ||
+    portals.find(
+      (p) =>
+        p.work_order_number?.toUpperCase() === cleanNum ||
+        p.work_order_id?.toUpperCase() === cleanNum ||
+        p.id?.toUpperCase() === cleanNum
+    )
 
   if (!portal) {
     const allWo = getLocalWorkOrders()
-    const wo = allWo.find(w => w.work_order_number.toLowerCase() === workOrderNumber.toLowerCase())
+    const wo = allWo.find(
+      (w) =>
+        w.work_order_number?.toUpperCase() === cleanNum ||
+        w.id?.toUpperCase() === cleanNum
+    )
     if (wo) {
       portal = getOrCreatePortalForWorkOrder(wo)
     }
   }
 
+  // If still not found, construct a portal on-the-fly for this reference
   if (!portal) {
-    return { success: false, message: 'Customer Portal not found. Please verify your portal link or contact studio.' }
+    const staticPin = generate4DigitPin(cleanNum)
+    const link = getPortalUrl(cleanNum)
+    portal = {
+      id: 'prt-' + cleanNum.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+      work_order_id: cleanNum,
+      work_order_number: cleanNum,
+      project_name: `Project ${cleanNum}`,
+      customer_name: 'Client',
+      mobile: '',
+      pin_code: staticPin,
+      share_link: link,
+      qr_code_url: getQRCodeUrl(link),
+      is_active: true,
+      is_expired: false,
+      settings: {
+        show_dashboard: true,
+        show_payments: true,
+        show_contract: true,
+        show_schedule: true,
+        show_moodboard: true,
+        show_gallery: true,
+        show_deliverables: true,
+        show_documents: true,
+        show_support: true,
+        enable_online_payments: true,
+      },
+      created_at: new Date().toISOString(),
+    }
+    saveAllPortals([portal, ...portals.filter((p) => p.id !== portal!.id)])
   }
 
   if (!portal.is_active || portal.is_expired) {
     return { success: false, message: 'This Customer Portal is inactive or expired. Please contact studio support.' }
   }
 
-  const expectedStaticPin = generate4DigitPin(workOrderNumber)
+  const expectedStaticPin = generate4DigitPin(cleanNum)
   const inputPin = pin.trim()
 
   const isValidPin =

@@ -916,35 +916,35 @@ export async function resetWorkOrderAcknowledgement(
  */
 export async function fetchWorkOrderFromSupabase(workOrderNumberOrId: string): Promise<WorkOrder | null> {
   if (!workOrderNumberOrId) return null
-  const clean = workOrderNumberOrId.toUpperCase()
+  const clean = workOrderNumberOrId.trim().toUpperCase()
 
   // 1. Check local cache first
   const localList = getLocalWorkOrders()
   let wo = localList.find(
-    (w) => w.work_order_number.toUpperCase() === clean || w.id.toUpperCase() === clean
+    (w) => (w.work_order_number || '').toUpperCase() === clean || (w.id || '').toUpperCase() === clean
   )
 
-  // 2. Query Supabase directly
+  // 2. Query Cloud directly
   try {
     const remoteRows = await pullTableFromCloud('work_orders')
     if (remoteRows && remoteRows.length > 0) {
-      const flat = Array.isArray(remoteRows[0]) ? remoteRows[0] : remoteRows
-      const matched = flat.find(
+      const allCloudWOs = extractEntitiesFromCloudRows(remoteRows)
+      const matched = allCloudWOs.find(
         (w: any) =>
           w &&
-          (w.work_order_number?.toUpperCase() === clean || w.id?.toUpperCase() === clean)
+          ((w.work_order_number || '').toUpperCase() === clean || (w.id || '').toUpperCase() === clean)
       )
 
       if (matched) {
-        wo = matched
-        // Sync back to local store
+        wo = recalculateWorkOrderFinancials(matched)
+        // Sync locally only - do NOT push back to cloud to avoid overwriting database
         const idx = localList.findIndex((w) => w.id === matched.id || w.work_order_number === matched.work_order_number)
         if (idx !== -1) {
-          localList[idx] = matched
+          localList[idx] = wo
         } else {
-          localList.unshift(matched)
+          localList.unshift(wo)
         }
-        saveLocalWorkOrders(localList)
+        saveLocalWorkOrdersOnly(localList)
       }
     }
   } catch (e) {
